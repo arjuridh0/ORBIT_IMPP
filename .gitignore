@@ -1,0 +1,28 @@
+# Dependencies & build
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+*.log
+.DS_Store
+
+# Env & secrets
+.env*.local
+
+# Dokumentasi internal (tidak untuk repo publik; hanya README.md yang ikut)
+AGENTS.md
+DESIGN.md
+PRODUCT.md
+implementation_plan.md
+SETUP_SUPABASE.md
+HANDOFF.md
+ERROR_LOG.md
+CLIENT_DISCUSSION.md
+CLIENT_DISCUSSION.pdf
+docs/
+
+# Kredensial lokal (tidak untuk repo publik)
+supabase/USER_ACCOUNTS.md
+
+# Tooling internal
+.impeccable/
