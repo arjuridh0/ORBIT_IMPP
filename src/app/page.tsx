@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Header from '@/components/Header'
-import Sidebar from '@/components/Sidebar'
 import Calendar from '@/components/Calendar'
+import TodayStatsBoard from '@/components/TodayStatsBoard'
+import DivisiFilter from '@/components/DivisiFilter'
+import UpcomingList from '@/components/UpcomingList'
 import { useEvents } from '@/hooks/useEvents'
 import { supabase } from '@/lib/supabase/client'
 import { Icon } from '@/components/icons'
@@ -38,12 +40,18 @@ export default function Home() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8">
-          <div className="order-2 lg:order-1 lg:col-span-3">
-            <Sidebar stats={stats} divisiFilter={divisiFilter} onFilterChange={setDivisiFilter} />
-          </div>
-          <div className="order-1 lg:order-2 lg:col-span-9">
+          <section className="lg:col-span-3 lg:row-start-1 lg:col-start-1">
+            <TodayStatsBoard stats={stats} divisiFilter={divisiFilter} />
+          </section>
+          <section className="lg:col-span-3 lg:row-start-2 lg:col-start-1">
+            <DivisiFilter divisiFilter={divisiFilter} onFilterChange={setDivisiFilter} />
+          </section>
+          <div className="lg:col-span-9 lg:row-start-1 lg:col-start-4">
             <Calendar useEventsHook={eventsHook} divisiFilter={divisiFilter} />
           </div>
+          <section className="lg:col-span-3 lg:row-start-3 lg:col-start-1">
+            <UpcomingList stats={stats} divisiFilter={divisiFilter} />
+          </section>
         </div>
       </main>
     </div>
