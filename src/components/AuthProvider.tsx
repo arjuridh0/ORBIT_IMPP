@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const canEditEvent = useCallback(
     (createdBy: string | null) => {
       if (!profile) return false
-      if (profile.role === 'admin') return true
+      if (profile.role === 'admin' || profile.role === 'ketua' || profile.role === 'superadmin') return true
       return !!createdBy && createdBy === profile.id
     },
     [profile]

@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
 const DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu']
+const ELEVATED_ROLES = ['admin', 'ketua', 'superadmin']
 
 async function requireAdmin() {
   const supabase = await getSupabaseServerClient()
@@ -15,7 +16,7 @@ async function requireAdmin() {
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'admin') return { status: 403, error: 'Hanya admin yang boleh mengakses' }
+  if (!ELEVATED_ROLES.includes(profile?.role || '')) return { status: 403, error: 'Akses ditolak' }
   return null
 }
 
@@ -44,18 +45,20 @@ export async function GET() {
   const { data: profiles } = await admin.from('profiles').select('id, full_name, role, jabatan, divisi, avatar_url')
   const byId = new Map((profiles || []).map((p) => [p.id, p]))
 
-  const merged = (users || []).map((u) => {
-    const p = byId.get(u.id)
-    return {
-      id: u.id,
-      email: u.email || '',
-      full_name: p?.full_name || (u.user_metadata?.full_name as string) || '-',
-      role: p?.role || '-',
-      jabatan: p?.jabatan || null,
-      divisi: p?.divisi || '-',
-      avatar_url: p?.avatar_url || null,
-    }
-  })
+  const merged = (users || [])
+    .map((u) => {
+      const p = byId.get(u.id)
+      return {
+        id: u.id,
+        email: u.email || '',
+        full_name: p?.full_name || (u.user_metadata?.full_name as string) || '-',
+        role: p?.role || '-',
+        jabatan: p?.jabatan || null,
+        divisi: p?.divisi || '-',
+        avatar_url: p?.avatar_url || null,
+      }
+    })
+    .filter((u) => u.role !== 'superadmin')  // superadmin tidak tampil di list
 
   return NextResponse.json({ users: merged })
 }
@@ -76,7 +79,8 @@ export async function POST(request: NextRequest) {
   const full_name = String(body.full_name || '').trim()
   const email = String(body.email || '').trim()
   const password = String(body.password || '')
-  const role = body.role === 'admin' ? 'admin' : 'editor'
+  const allowedRoles = ['admin', 'editor', 'ketua']
+  const role = allowedRoles.includes(body.role) ? body.role : 'editor'
   const divisi = DIVISI.includes(body.divisi) ? body.divisi : null
   const jabatan = body.jabatan ? String(body.jabatan).trim() : null
 

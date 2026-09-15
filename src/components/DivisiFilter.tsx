@@ -47,7 +47,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
     : `${selected.length} divisi`
 
   return (
-    <section className="bg-white rounded-xl card-soft-hover p-3 lg:p-4">
+    <section className={`bg-white rounded-xl card-soft-hover p-3 lg:p-4 ${open ? 'relative z-50' : ''}`}>
       <div className="flex items-center justify-between mb-1">
         <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
           <span className="text-blue-600"><Icon name="palette" /></span>
@@ -121,7 +121,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
         </button>
 
         {open && (
-          <div className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg">
+          <div className="absolute z-50 mt-1 w-full max-h-64 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg">
             {items.map((d) => {
               const isActive = active(d.key)
               return (

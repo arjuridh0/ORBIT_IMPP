@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '
 export const metadata: Metadata = {
   title: 'ORBIT IMPP',
   description: 'Kalender Kegiatan Organisasi IMPP',
-  icons: { icon: '/favicon.svg' },
+  icons: { icon: '/logo-orbit-impp.png' },
 }
 
 export const viewport: Viewport = {
@@ -33,19 +33,23 @@ export default function RootLayout({
           {children}
           <footer className="footer-polish py-8">
             <div className="max-w-[1400px] mx-auto px-4 text-center">
-              <img
-                src="/logo-orbit-impp.png"
-                alt="Logo ORBIT IMPP"
-                className="h-8 w-auto mx-auto mb-3 object-contain"
-              />
+              {/* Dual logo: ORBIT + IMPP */}
+              <div className="flex items-center justify-center gap-4 mb-3">
+                <img src="/logo-orbit-impp.png" alt="Logo ORBIT" className="h-8 w-auto object-contain" />
+                <span className="text-gray-300 font-light text-lg">×</span>
+                <img src="/logo impp.png" alt="Logo IMPP" className="h-8 w-auto object-contain" />
+              </div>
               <p className="text-sm font-bold text-[#031b46]">
                 ORBIT <span className="text-[#1d75ae]">·</span> IMPP
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Kalender Kegiatan Organisasi — Satu papan agenda untuk semua divisi.
+                Organisasi, Rekapitulasi, Birokrasi, &amp; Informasi Terpadu
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Ikatan Mahasiswa Pelajar Pemalang
               </p>
               <p className="text-xs text-gray-500/70 mt-3">
-                &copy; {new Date().getFullYear()} ORBIT IMPP. Dibuat dengan semangat divisi.
+                &copy; {new Date().getFullYear()} ORBIT IMPP
               </p>
             </div>
           </footer>

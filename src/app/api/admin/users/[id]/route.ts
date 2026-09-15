@@ -3,11 +3,12 @@ import { createClient } from '@supabase/supabase-js'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
 const DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu']
+const ELEVATED_ROLES = ['admin', 'ketua', 'superadmin']
 
-async function requireAdmin() {
+async function requireElevated() {
   const supabase = await getSupabaseServerClient()
   const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) return { status: 401, error: 'Belum login', user: null }
+  if (error || !user) return { status: 401 as const, error: 'Belum login', user: null, callerRole: '' }
 
   const { data: profile } = await supabase
     .from('profiles')
@@ -15,8 +16,10 @@ async function requireAdmin() {
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'admin') return { status: 403, error: 'Hanya admin yang boleh mengakses', user }
-  return { user }
+  if (!ELEVATED_ROLES.includes(profile?.role || '')) {
+    return { status: 403 as const, error: 'Akses ditolak', user, callerRole: profile?.role || '' }
+  }
+  return { user, callerRole: profile?.role || '', status: undefined, error: undefined }
 }
 
 function getServiceClient() {
@@ -29,22 +32,18 @@ function getServiceClient() {
 export const dynamic = 'force-dynamic'
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await requireAdmin()
+  const auth = await requireElevated()
   if (auth.status) return NextResponse.json({ error: auth.error }, { status: auth.status })
 
   const admin = getServiceClient()
-  if (!admin) {
-    return NextResponse.json(
-      { error: 'SUPABASE_SERVICE_ROLE_KEY belum diset di .env.local' },
-      { status: 500 }
-    )
-  }
+  if (!admin) return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY belum diset' }, { status: 500 })
 
   const { id } = await params
   const body = await request.json()
 
+  const allowedRoles = ['admin', 'editor', 'ketua']
   const full_name = body.full_name !== undefined ? String(body.full_name || '').trim() : null
-  const role = body.role === 'admin' || body.role === 'editor' ? body.role : null
+  const role = allowedRoles.includes(body.role) ? body.role : null
   const divisi = body.divisi !== undefined ? (DIVISI.includes(body.divisi) ? body.divisi : null) : null
   const jabatan = body.jabatan !== undefined ? String(body.jabatan || '').trim() : null
 
@@ -54,64 +53,51 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (divisi !== null) patch.divisi = divisi
   if (jabatan !== null) patch.jabatan = jabatan
 
-  if (Object.keys(patch).length === 0) {
-    return NextResponse.json({ error: 'Tidak ada data yang diubah' }, { status: 400 })
-  }
+  if (Object.keys(patch).length === 0) return NextResponse.json({ error: 'Tidak ada data yang diubah' }, { status: 400 })
 
   const { data: existing } = await admin.from('profiles').select('id').eq('id', id).maybeSingle()
-  if (!existing) {
-    return NextResponse.json({ error: 'Profil tidak ditemukan' }, { status: 404 })
-  }
+  if (!existing) return NextResponse.json({ error: 'Profil tidak ditemukan' }, { status: 404 })
 
   const { error: updateErr } = await admin.from('profiles').update(patch).eq('id', id)
-  if (updateErr) {
-    return NextResponse.json({ error: updateErr.message }, { status: 400 })
-  }
+  if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 400 })
 
-  if (full_name !== null) {
-    await admin.auth.admin.updateUserById(id, { user_metadata: { full_name } })
-  }
+  if (full_name !== null) await admin.auth.admin.updateUserById(id, { user_metadata: { full_name } })
 
   return NextResponse.json({ ok: true })
 }
 
 export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await requireAdmin()
+  const auth = await requireElevated()
   if (auth.status) return NextResponse.json({ error: auth.error }, { status: auth.status })
 
   const admin = getServiceClient()
-  if (!admin) {
-    return NextResponse.json(
-      { error: 'SUPABASE_SERVICE_ROLE_KEY belum diset di .env.local' },
-      { status: 500 }
-    )
-  }
+  if (!admin) return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY belum diset' }, { status: 500 })
 
   const { id } = await params
+  const callerRole = auth.callerRole
 
-  if (auth.user!.id === id) {
-    return NextResponse.json({ error: 'Tidak bisa menghapus akun sendiri' }, { status: 400 })
-  }
+  if (auth.user!.id === id) return NextResponse.json({ error: 'Tidak bisa menghapus akun sendiri' }, { status: 400 })
 
   const { data: target } = await admin.from('profiles').select('id, role').eq('id', id).maybeSingle()
-  if (target?.role === 'admin') {
-    return NextResponse.json({ error: 'Tidak bisa menghapus user dengan role admin' }, { status: 400 })
+  if (!target) return NextResponse.json({ error: 'User tidak ditemukan' }, { status: 404 })
+
+  // Hierarchy: superadmin > ketua > admin > editor
+  if (target.role === 'superadmin' && callerRole !== 'superadmin') {
+    return NextResponse.json({ error: 'Tidak bisa menghapus superadmin' }, { status: 403 })
+  }
+  if (target.role === 'ketua' && callerRole === 'admin') {
+    return NextResponse.json({ error: 'Admin tidak bisa menghapus ketua' }, { status: 403 })
+  }
+  if (target.role === 'admin' && callerRole === 'admin') {
+    return NextResponse.json({ error: 'Admin tidak bisa menghapus admin lain' }, { status: 403 })
   }
 
-  const { error: eventErr } = await admin.from('events').delete().eq('created_by', id)
-  if (eventErr) {
-    return NextResponse.json({ error: eventErr.message }, { status: 400 })
-  }
-
+  await admin.from('events').delete().eq('created_by', id)
   const { error: profileErr } = await admin.from('profiles').delete().eq('id', id)
-  if (profileErr) {
-    return NextResponse.json({ error: profileErr.message }, { status: 400 })
-  }
+  if (profileErr) return NextResponse.json({ error: profileErr.message }, { status: 400 })
 
   const { error: authErr } = await admin.auth.admin.deleteUser(id)
-  if (authErr) {
-    return NextResponse.json({ error: authErr.message }, { status: 400 })
-  }
+  if (authErr) return NextResponse.json({ error: authErr.message }, { status: 400 })
 
   return NextResponse.json({ ok: true })
 }

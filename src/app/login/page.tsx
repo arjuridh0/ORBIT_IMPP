@@ -74,6 +74,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [showPw, setShowPw] = useState(false)
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const el = e.currentTarget
@@ -134,12 +135,15 @@ export default function LoginPage() {
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
         >
+          {/* Header: dual logo ORBIT + IMPP */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="neu-logo w-11 h-11 bg-white rounded-xl flex items-center justify-center">
-              <span className="text-blue-600"><Icon name="key" cls="w-5 h-5" /></span>
+            <div className="flex items-center gap-2">
+              <img src="/logo-orbit-impp.png" alt="ORBIT" className="h-9 w-auto object-contain" />
+              <span className="text-gray-300 text-sm">×</span>
+              <img src="/logo impp.png" alt="IMPP" className="h-9 w-auto object-contain" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 tracking-tight">ORBIT</h1>
+              <h1 className="text-lg font-bold text-gray-900 tracking-tight">ORBIT IMPP</h1>
               <p className="text-xs text-gray-500">Masuk untuk mengelola kegiatan</p>
             </div>
           </div>
@@ -160,16 +164,26 @@ export default function LoginPage() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-              <input
-                id="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="neu-input"
-                placeholder="Password akun"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPw ? 'text' : 'password'}
+                  required
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="neu-input pr-10"
+                  placeholder="Password akun"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                  aria-label={showPw ? 'Sembunyikan password' : 'Tampilkan password'}
+                >
+                  <Icon name={showPw ? 'eye-off' : 'eye'} cls="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <button type="submit" disabled={submitting} className="neu-btn">
               {submitting ? 'Memproses...' : 'Masuk'}

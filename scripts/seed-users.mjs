@@ -13,15 +13,24 @@ import { createClient } from '@supabase/supabase-js'
 
 // Email: NAMA@orbit.id (internal dulu, bisa diganti ke email asli lewat Kelola User nanti)
 const USERS = [
-  { full_name: 'Ketua Umum', jabatan: 'Ketua Umum', role: 'admin', divisi: 'bph', email: 'ketum@orbit.id' },
-  { full_name: 'Sekretaris Umum', jabatan: 'Sekretaris Umum', role: 'admin', divisi: 'bph', email: 'sekre@orbit.id' },
-  { full_name: 'Bendahara', jabatan: 'Bendahara', role: 'admin', divisi: 'bph', email: 'bendahara@orbit.id' },
-  { full_name: 'Koor Kaderisasi', jabatan: 'Koordinator Divisi', role: 'editor', divisi: 'kaderisasi', email: 'kaderisasi@orbit.id' },
-  { full_name: 'Koor Sosma', jabatan: 'Koordinator Divisi', role: 'editor', divisi: 'sosma', email: 'sosma@orbit.id' },
-  { full_name: 'Koor Bakmi', jabatan: 'Koordinator Divisi', role: 'editor', divisi: 'bakmi', email: 'bakmi@orbit.id' },
-  { full_name: 'Koor DPW', jabatan: 'Koordinator Divisi', role: 'editor', divisi: 'dpw', email: 'dpw@orbit.id' },
-  { full_name: 'Koor Inforsi', jabatan: 'Koordinator Divisi', role: 'editor', divisi: 'inforsi', email: 'inforsi@orbit.id' },
-  { full_name: 'Koor Deplu', jabatan: 'Koordinator Divisi', role: 'editor', divisi: 'deplu', email: 'deplu@orbit.id' },
+  { full_name: 'Ketua Umum', jabatan: 'Ketua Umum', role: 'ketua', divisi: 'bph', email: 'ketum@orbit.id' },
+  { full_name: 'Wakil Ketua', jabatan: 'Wakil Ketua', role: 'admin', divisi: 'bph', email: 'waketum@orbit.id' },
+  { full_name: 'Sekretaris 1', jabatan: 'Sekretaris 1', role: 'admin', divisi: 'bph', email: 'sekre@orbit.id' },
+  { full_name: 'Sekretaris 2', jabatan: 'Sekretaris 2', role: 'admin', divisi: 'bph', email: 'sekre2@orbit.id' },
+  { full_name: 'Bendahara 1', jabatan: 'Bendahara 1', role: 'admin', divisi: 'bph', email: 'bendahara@orbit.id' },
+  { full_name: 'Bendahara 2', jabatan: 'Bendahara 2', role: 'admin', divisi: 'bph', email: 'bendahara2@orbit.id' },
+  { full_name: 'Koor Kaderisasi', jabatan: 'Koor Kaderisasi', role: 'editor', divisi: 'kaderisasi', email: 'kaderisasi@orbit.id' },
+  { full_name: 'Sekjen Kaderisasi', jabatan: 'Sekjen Kaderisasi', role: 'editor', divisi: 'kaderisasi', email: 'sekjen.kaderisasi@orbit.id' },
+  { full_name: 'Koor Sosma', jabatan: 'Koor Sosma', role: 'editor', divisi: 'sosma', email: 'sosma@orbit.id' },
+  { full_name: 'Sekjen Sosma', jabatan: 'Sekjen Sosma', role: 'editor', divisi: 'sosma', email: 'sekjen.sosma@orbit.id' },
+  { full_name: 'Koor Bakmi', jabatan: 'Koor Bakmi', role: 'editor', divisi: 'bakmi', email: 'bakmi@orbit.id' },
+  { full_name: 'Sekjen Bakmi', jabatan: 'Sekjen Bakmi', role: 'editor', divisi: 'bakmi', email: 'sekjen.bakmi@orbit.id' },
+  { full_name: 'Koor DPW', jabatan: 'Koor DPW', role: 'editor', divisi: 'dpw', email: 'dpw@orbit.id' },
+  { full_name: 'Sekjen DPW', jabatan: 'Sekjen DPW', role: 'editor', divisi: 'dpw', email: 'sekjen.dpw@orbit.id' },
+  { full_name: 'Koor Inforsi', jabatan: 'Koor Inforsi', role: 'editor', divisi: 'inforsi', email: 'inforsi@orbit.id' },
+  { full_name: 'Sekjen Inforsi', jabatan: 'Sekjen Inforsi', role: 'editor', divisi: 'inforsi', email: 'sekjen.inforsi@orbit.id' },
+  { full_name: 'Koor Deplu', jabatan: 'Koor Deplu', role: 'editor', divisi: 'deplu', email: 'deplu@orbit.id' },
+  { full_name: 'Sekjen Deplu', jabatan: 'Sekjen Deplu', role: 'editor', divisi: 'deplu', email: 'sekjen.deplu@orbit.id' },
 ]
 
 const VALID_DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu']
@@ -46,7 +55,7 @@ function validate() {
     if (emails.has(u.email)) problems.push(`Email duplikat: ${u.email}`)
     emails.add(u.email)
     if (!VALID_DIVISI.includes(u.divisi)) problems.push(`Divisi tidak valid: ${u.divisi}`)
-    if (!['admin', 'editor'].includes(u.role)) problems.push(`Role tidak valid: ${u.role}`)
+    if (!['admin', 'editor', 'ketua'].includes(u.role)) problems.push(`Role tidak valid: ${u.role}`)
   }
   return problems
 }

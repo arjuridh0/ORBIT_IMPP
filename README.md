@@ -8,10 +8,16 @@ Kalender kegiatan organisasi IMPP. Satu papan agenda untuk semua divisi: jadwal 
 - CRUD kegiatan, kegiatan berulang (harian/mingguan), jam TBD, drag & drop dan resize.
 - Realtime sync via Supabase tanpa refresh.
 - Warna per divisi sebagai identitas data, bukan dekorasi.
-- Login multi-role: pengunjung bisa lihat kalender tanpa akun, editor mengelola kegiatan divisinya, admin mengelola semua kegiatan dan user.
-- Kelola user (daftar, edit, reset password, role/divisi) khusus admin.
-- Profil mandiri (foto, nama, jabatan, warna divisi) dan ganti password.
-- Halaman Tentang IMPP: visi-misi (editable admin) dan struktur organisasi dari data user.
+- Dual branding: Logo ORBIT dan Logo IMPP di footer, drawer mobile, dan login.
+- Login multi-role berhirarki:
+  - **Pengunjung**: melihat kalender tanpa login.
+  - **Editor (Koor Divisi & Sekjen)**: mengelola kegiatan divisinya & mendaftarkan nama anggota.
+  - **Admin (BPH)**: mengelola semua kegiatan, BPH, dan user editor.
+  - **Ketua (Ketua Umum)**: mengelola semua kegiatan dan user (kecuali superadmin).
+  - **Superadmin (Developer)**: otoritas tertinggi (tersembunyi dari daftar user umum).
+- Kelola user (daftar, edit, reset password, role/divisi) dengan proteksi hirarki dan show/hide password toggle.
+- Profil mandiri (foto, nama, jabatan, warna divisi) dan ganti password dengan show/hide toggle.
+- Halaman Tentang IMPP: visi-misi dan struktur organisasi interaktif (Ketua & Wakil sejajar, Sekre 1&2, Bendahara 1&2, Koor, Sekjen, dan Anggota dari tabel `members` tanpa akun).
 - Header navbar tengah + hamburger + avatar dropdown.
 
 ## Teknologi
@@ -26,14 +32,15 @@ Kalender kegiatan organisasi IMPP. Satu papan agenda untuk semua divisi: jadwal 
 ## Struktur folder
 
 ```
-app/                 # Halaman & API routes (App Router)
-components/          # Komponen UI (calendar, header, sidebar, auth)
-hooks/               # useEvents (CRUD + realtime), useDivisi
-lib/                 # Supabase client/server, tipe, konstanta
-public/              # Aset statis (logo, favicon, vendor FullCalendar, ikon PWA)
-scripts/             # Utilitas (seed user, ikon PWA)
-supabase/            # SQL fase (RLS + schema) 
-middleware.ts        # Proteksi route /admin & /api/admin
+src/
+  app/                 # Halaman & API routes (App Router)
+  components/          # Komponen UI (calendar, header, sidebar, auth)
+  hooks/               # useEvents (CRUD + realtime), useDivisi
+  lib/                 # Supabase client/server, tipe, konstanta
+  middleware.ts        # Proteksi route /admin & /api/admin
+public/                # Aset statis (logo, favicon, vendor FullCalendar)
+scripts/               # Utilitas (seed user)
+supabase/              # SQL fase (schema, USER_ACCOUNTS.md)
 ```
 
 ## Persyaratan

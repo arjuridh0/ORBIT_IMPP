@@ -28,6 +28,9 @@ export default function ProfilPage() {
   const [newPw, setNewPw] = useState('')
   const [confirmPw, setConfirmPw] = useState('')
   const [savingPw, setSavingPw] = useState(false)
+  const [showOldPw, setShowOldPw] = useState(false)
+  const [showNewPw, setShowNewPw] = useState(false)
+  const [showConfirmPw, setShowConfirmPw] = useState(false)
 
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -326,15 +329,30 @@ export default function ProfilPage() {
           <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Ganti Password</h2>
           <div>
             <label htmlFor="oldPw" className="block text-sm font-medium text-gray-700 mb-1.5">Password Lama</label>
-            <input id="oldPw" type="password" required autoComplete="current-password" value={oldPw} onChange={(e) => setOldPw(e.target.value)} className="ds-input" />
+            <div className="relative">
+              <input id="oldPw" type={showOldPw ? 'text' : 'password'} required autoComplete="current-password" value={oldPw} onChange={(e) => setOldPw(e.target.value)} className="ds-input pr-10" />
+              <button type="button" onClick={() => setShowOldPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition" aria-label="Toggle password lama">
+                <Icon name={showOldPw ? 'eye-off' : 'eye'} cls="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <div>
             <label htmlFor="newPw" className="block text-sm font-medium text-gray-700 mb-1.5">Password Baru</label>
-            <input id="newPw" type="password" required autoComplete="new-password" value={newPw} onChange={(e) => setNewPw(e.target.value)} className="ds-input" />
+            <div className="relative">
+              <input id="newPw" type={showNewPw ? 'text' : 'password'} required autoComplete="new-password" value={newPw} onChange={(e) => setNewPw(e.target.value)} className="ds-input pr-10" />
+              <button type="button" onClick={() => setShowNewPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition" aria-label="Toggle password baru">
+                <Icon name={showNewPw ? 'eye-off' : 'eye'} cls="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <div>
             <label htmlFor="confirmPw" className="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi Password Baru</label>
-            <input id="confirmPw" type="password" required autoComplete="new-password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} className="ds-input" />
+            <div className="relative">
+              <input id="confirmPw" type={showConfirmPw ? 'text' : 'password'} required autoComplete="new-password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} className="ds-input pr-10" />
+              <button type="button" onClick={() => setShowConfirmPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition" aria-label="Toggle konfirmasi password">
+                <Icon name={showConfirmPw ? 'eye-off' : 'eye'} cls="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <button type="submit" className="btn btn-primary" disabled={savingPw}>{savingPw ? 'Menyimpan...' : 'Ganti Password'}</button>
         </form>

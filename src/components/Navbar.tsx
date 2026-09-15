@@ -70,7 +70,7 @@ export default function Navbar() {
     </Link>
   )
 
-  const showKelola = !loading && profile?.role === 'admin'
+  const showKelola = !loading && (profile?.role === 'admin' || profile?.role === 'ketua' || profile?.role === 'superadmin')
   const showMasuk = !loading && !profile
 
   const Masuk = (
@@ -145,6 +145,12 @@ export default function Navbar() {
                 Kelola User
               </Link>
             )}
+            {/* Logo strip bawah drawer */}
+            <div className="mt-2 pt-3 border-t border-gray-100 flex items-center justify-center gap-3 pb-1">
+              <img src="/logo-orbit-impp.png" alt="ORBIT" className="h-5 w-auto object-contain opacity-60" />
+              <span className="text-gray-300 text-xs">×</span>
+              <img src="/logo impp.png" alt="IMPP" className="h-5 w-auto object-contain opacity-60" />
+            </div>
           </div>
         </>
       )}

@@ -31,6 +31,7 @@ export default function AdminUsersPage() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showFormPw, setShowFormPw] = useState(false)
 
   // Avatar Management for BPH
   const [avatarTarget, setAvatarTarget] = useState<AdminUser | null>(null)
@@ -132,8 +133,19 @@ export default function AdminUsersPage() {
     setUsers(data.users || [])
   }, [])
 
+  const canDelete = useCallback((target: AdminUser): boolean => {
+    if (!profile) return false
+    if (profile.id === target.id) return false
+    const cr = profile.role
+    const tr = target.role
+    if (cr === 'superadmin') return true
+    if (cr === 'ketua') return tr !== 'superadmin'
+    if (cr === 'admin') return tr === 'editor'
+    return false
+  }, [profile])
+
   useEffect(() => {
-    if (profile?.role === 'admin') load()
+    if (profile && ['admin', 'ketua', 'superadmin'].includes(profile.role)) load()
   }, [profile, load])
 
   async function handleSubmit(e: React.FormEvent) {
@@ -240,9 +252,27 @@ export default function AdminUsersPage() {
       html: `
         <div class="space-y-3 text-left">
           <p class="text-sm text-gray-500">Password baru untuk <span class="font-semibold text-gray-800">${u.full_name}</span> (${u.email})</p>
-          <input id="sw-pass" type="password" class="ds-input" placeholder="Minimal 6 karakter">
+          <div class="relative">
+            <input id="sw-pass" type="password" class="ds-input pr-10" placeholder="Minimal 6 karakter">
+            <button type="button" id="sw-pass-toggle" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition" aria-label="Toggle password">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
       `,
+      didOpen: () => {
+        const inp = document.getElementById('sw-pass') as HTMLInputElement
+        const btn = document.getElementById('sw-pass-toggle') as HTMLButtonElement
+        if (btn && inp) {
+          btn.addEventListener('click', () => {
+            const isText = inp.type === 'text'
+            inp.type = isText ? 'password' : 'text'
+            btn.innerHTML = isText
+              ? `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+              : `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><path d="M1 1l22 22"/><path d="M14.12 14.12a3 3 0 01-4.24-4.24"/></svg>`
+          })
+        }
+      },
       confirmButtonText: 'Reset',
       confirmButtonColor: '#2563eb',
       showCancelButton: true,
@@ -395,25 +425,28 @@ export default function AdminUsersPage() {
                       {u.jabatan && <p className="text-xs text-gray-400">{u.jabatan}</p>}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      u.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {u.role === 'admin' ? 'Admin' : 'Editor'}
-                    </span>
-                    {items.some((d) => d.key === u.divisi) && (
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-600">
-                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: items.find((d) => d.key === u.divisi)?.color }} />
-                        {items.find((d) => d.key === u.divisi)?.label}
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                        u.role === 'ketua' ? 'bg-purple-100 text-purple-700' :
+                        u.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {u.role === 'ketua' ? 'Ketua' : u.role === 'admin' ? 'Admin' : 'Editor'}
                       </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <button type="button" onClick={() => openAvatar(u)} className="btn btn-outline btn-sm">Foto</button>
-                    <button type="button" onClick={() => openEdit(u)} className="btn btn-outline btn-sm">Edit</button>
-                    <button type="button" onClick={() => openResetPassword(u)} className="btn btn-outline btn-sm">Reset PW</button>
-                    <button type="button" onClick={() => openDelete(u)} className="btn btn-danger btn-sm">Hapus</button>
-                  </div>
+                      {items.some((d) => d.key === u.divisi) && (
+                        <span className="inline-flex items-center gap-1 text-xs text-gray-600">
+                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: items.find((d) => d.key === u.divisi)?.color }} />
+                          {items.find((d) => d.key === u.divisi)?.label}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <button type="button" onClick={() => openAvatar(u)} className="btn btn-outline btn-sm">Foto</button>
+                      <button type="button" onClick={() => openEdit(u)} className="btn btn-outline btn-sm">Edit</button>
+                      <button type="button" onClick={() => openResetPassword(u)} className="btn btn-outline btn-sm">Reset PW</button>
+                      {canDelete(u) && (
+                        <button type="button" onClick={() => openDelete(u)} className="btn btn-danger btn-sm">Hapus</button>
+                      )}
+                    </div>
                 </div>
               ))}
               {users.length === 0 && (
@@ -472,7 +505,9 @@ export default function AdminUsersPage() {
                           <button type="button" onClick={() => openAvatar(u)} className="btn btn-outline btn-sm min-h-[38px]" title="Kelola foto profil">Foto</button>
                           <button type="button" onClick={() => openEdit(u)} className="btn btn-outline btn-sm min-h-[38px]">Edit</button>
                           <button type="button" onClick={() => openResetPassword(u)} className="btn btn-outline btn-sm min-h-[38px]">Reset PW</button>
-                          <button type="button" onClick={() => openDelete(u)} className="btn btn-danger btn-sm min-h-[38px]">Hapus</button>
+                          {canDelete(u) && (
+                            <button type="button" onClick={() => openDelete(u)} className="btn btn-danger btn-sm min-h-[38px]">Hapus</button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -600,14 +635,20 @@ export default function AdminUsersPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="ds-input" placeholder="Minimal 6 karakter" />
+                <div className="relative">
+                  <input type={showFormPw ? 'text' : 'password'} required minLength={6} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="ds-input pr-10" placeholder="Minimal 6 karakter" />
+                  <button type="button" onClick={() => setShowFormPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition" aria-label="Toggle password">
+                    <Icon name={showFormPw ? 'eye-off' : 'eye'} cls="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                   <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="ds-input">
-                    <option value="editor">Editor</option>
-                    <option value="admin">Admin</option>
+                    <option value="editor">Editor (Koor/Sekjen)</option>
+                    <option value="admin">Admin (BPH)</option>
+                    <option value="ketua">Ketua</option>
                   </select>
                 </div>
                 <div>

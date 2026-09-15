@@ -23,6 +23,7 @@ docs/
 
 # Kredensial lokal (tidak untuk repo publik)
 supabase/USER_ACCOUNTS.md
+supabase/akun_supabase.txt
 
 # Tooling internal
 .impeccable/
