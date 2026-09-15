@@ -14,6 +14,7 @@ export interface Database {
           id: string
           title: string
           description: string | null
+          location: string | null
           start_date: string
           end_date: string | null
           is_tbd: boolean
@@ -28,6 +29,7 @@ export interface Database {
           id?: string
           title: string
           description?: string | null
+          location?: string | null
           start_date: string
           end_date?: string | null
           is_tbd?: boolean
@@ -42,6 +44,7 @@ export interface Database {
           id?: string
           title?: string
           description?: string | null
+          location?: string | null
           start_date?: string
           end_date?: string | null
           is_tbd?: boolean

@@ -6,10 +6,47 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] })
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://orbit-impp.id'
+
 export const metadata: Metadata = {
-  title: 'ORBIT IMPP',
-  description: 'Kalender Kegiatan Organisasi IMPP',
-  icons: { icon: '/logo-orbit-impp.png' },
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'ORBIT IMPP - Kalender Kegiatan Organisasi',
+    template: '%s | ORBIT IMPP',
+  },
+  description: 'Satu papan agenda resmi untuk seluruh divisi Ikatan Mahasiswa Pelajar Pemalang (IMPP). Pantau jadwal rabul & kegiatan tahunan real-time tanpa tanya di grup chat.',
+  keywords: [
+    'ORBIT IMPP',
+    'IMPP',
+    'Ikatan Mahasiswa Pelajar Pemalang',
+    'Kalender Kegiatan',
+    'Agenda IMPP',
+    'Pemalang',
+    'Jadwal Organisasi',
+  ],
+  authors: [{ name: 'ORBIT IMPP Team' }],
+  creator: 'ORBIT IMPP',
+  publisher: 'ORBIT IMPP',
+  alternates: {
+    canonical: '/',
+  },
+  icons: {
+    icon: '/logo-orbit-impp.png',
+    apple: '/logo-orbit-impp.png',
+  },
+  openGraph: {
+    title: 'ORBIT IMPP - Kalender Kegiatan Organisasi',
+    description: 'Satu papan agenda resmi untuk seluruh divisi Ikatan Mahasiswa Pelajar Pemalang (IMPP). Pantau jadwal rabul & kegiatan tahunan real-time.',
+    url: siteUrl,
+    siteName: 'ORBIT IMPP',
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ORBIT IMPP - Kalender Kegiatan Organisasi',
+    description: 'Satu papan agenda resmi untuk seluruh divisi Ikatan Mahasiswa Pelajar Pemalang (IMPP). Pantau jadwal rabul & kegiatan tahunan real-time.',
+  },
 }
 
 export const viewport: Viewport = {

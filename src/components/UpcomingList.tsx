@@ -38,6 +38,9 @@ export default function UpcomingList({ stats, divisiFilter }: UpcomingListProps)
           <div className="space-y-1">
             {mendatang.map((event) => {
               const color = event.color || DEFAULT_COLOR
+              const sDay = event.start_date.slice(0, 10)
+              const eDay = event.end_date ? event.end_date.slice(0, 10) : ''
+              const isMulti = !!(eDay && sDay !== eDay)
               return (
                 <button
                   key={event.id}
@@ -54,8 +57,13 @@ export default function UpcomingList({ stats, divisiFilter }: UpcomingListProps)
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 truncate">{event.title}</p>
-                    <p className="text-xs text-gray-500 tabular-nums">
-                      {event.is_tbd ? 'Jam TBD' : formatTime(event.start_date)}
+                    <p className="text-xs text-gray-500 tabular-nums truncate">
+                      {isMulti ? (
+                        <span className="text-blue-600 font-medium">Multi-hari ({dayNum(event.start_date)}–{dayNum(event.end_date!)} {monthShort(event.end_date!)})</span>
+                      ) : (
+                        event.is_tbd ? 'Jam TBD' : formatTime(event.start_date)
+                      )}
+                      {event.location ? ` • ${event.location}` : ''}
                     </p>
                   </div>
                 </button>

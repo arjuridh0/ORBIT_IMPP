@@ -876,9 +876,8 @@ body {
 
   /* Sel hari — cukup tinggi agar event muat */
   .fc .fc-daygrid-day-frame {
-    min-height: 60px !important;
+    min-height: 56px !important;
     aspect-ratio: unset !important;
-    overflow: hidden !important;
   }
 
   /* Angka tanggal */
@@ -889,9 +888,8 @@ body {
     line-height: 1 !important;
   }
 
-  /* Event chip */
+  /* Event chip (single & multi-day) */
   .fc .fc-daygrid-event {
-    width: 100% !important;
     margin: 1px 0 0 !important;
     padding: 1px 3px !important;
     border-radius: 3px !important;
@@ -899,7 +897,6 @@ body {
     font-weight: 600 !important;
     line-height: 1.25 !important;
     white-space: nowrap !important;
-    overflow: hidden !important;
     box-shadow: none !important;
     transform: none !important;
   }
@@ -908,7 +905,8 @@ body {
     display: none !important;
   }
 
-  .fc .fc-daygrid-event .fc-event-title {
+  .fc .fc-daygrid-event .fc-event-title,
+  .fc .fc-daygrid-event .fc-event-main {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
@@ -942,7 +940,6 @@ body {
 
   /* Baris "Sehari penuh" — kecilkan */
   .fc .fc-timegrid-divider { padding: 1px 0 !important; }
-  .fc .fc-daygrid-body { overflow: hidden !important; }
 
   /* Slot waktu lebih pendek */
   .fc .fc-timegrid-slot {

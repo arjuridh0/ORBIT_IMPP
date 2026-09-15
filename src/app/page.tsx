@@ -40,27 +40,23 @@ export default function Home() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8 items-start">
-          {/* Desktop Left Sidebar: Compact stack with zero gap bug */}
+          {/* Desktop Left Sidebar */}
           <aside className="hidden lg:flex lg:flex-col lg:col-span-3 gap-6">
             <TodayStatsBoard stats={stats} divisiFilter={divisiFilter} />
-            <DivisiFilter divisiFilter={divisiFilter} onFilterChange={setDivisiFilter} />
             <UpcomingList stats={stats} divisiFilter={divisiFilter} />
+            <DivisiFilter divisiFilter={divisiFilter} onFilterChange={setDivisiFilter} />
           </aside>
 
-          {/* Mobile Top: Stats & Filter before calendar */}
+          {/* Mobile Top: Stats, Upcoming & Filter before calendar */}
           <div className="lg:hidden space-y-4">
             <TodayStatsBoard stats={stats} divisiFilter={divisiFilter} />
+            <UpcomingList stats={stats} divisiFilter={divisiFilter} />
             <DivisiFilter divisiFilter={divisiFilter} onFilterChange={setDivisiFilter} />
           </div>
 
           {/* Main Calendar Area */}
           <div className="lg:col-span-9">
             <Calendar useEventsHook={eventsHook} divisiFilter={divisiFilter} />
-          </div>
-
-          {/* Mobile Bottom: Upcoming events after calendar */}
-          <div className="lg:hidden">
-            <UpcomingList stats={stats} divisiFilter={divisiFilter} />
           </div>
         </div>
       </main>

@@ -77,6 +77,7 @@ export function useEvents() {
         .insert([{
           title: eventData.title,
           description: eventData.description || null,
+          location: eventData.location || null,
           start_date: eventData.start_date,
           end_date: eventData.end_date || null,
           is_tbd: eventData.is_tbd ?? false,
@@ -106,6 +107,7 @@ export function useEvents() {
       const rows = eventsData.map(ev => ({
         title: ev.title,
         description: ev.description || null,
+        location: ev.location || null,
         start_date: ev.start_date,
         end_date: ev.end_date || null,
         is_tbd: ev.is_tbd ?? false,
@@ -214,12 +216,12 @@ export function useEvents() {
 
       const [todayRes, monthRes, upcomingRes] = await Promise.all([
         supabase.from('events').select('*')
-          .gte('start_date', todayStart).lt('start_date', todayEnd)
+          .or(`and(start_date.gte.${todayStart},start_date.lt.${todayEnd}),and(start_date.lt.${todayEnd},end_date.gte.${todayStart})`)
           .order('start_date', { ascending: true }),
         supabase.from('events').select('*', { count: 'exact', head: true })
           .gte('start_date', monthStart).lte('start_date', monthEnd),
         supabase.from('events').select('*')
-          .gte('start_date', now.toISOString())
+          .or(`start_date.gte.${now.toISOString()},end_date.gte.${now.toISOString()}`)
           .order('start_date', { ascending: true })
           .limit(3),
       ])

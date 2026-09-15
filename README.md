@@ -19,6 +19,15 @@ Kalender kegiatan organisasi IMPP. Satu papan agenda untuk semua divisi: jadwal 
 - Profil mandiri (foto, nama, jabatan, warna divisi) dan ganti password dengan show/hide toggle.
 - Halaman Tentang IMPP: visi-misi dan struktur organisasi interaktif (Ketua & Wakil sejajar, Sekre 1&2, Bendahara 1&2, Koor, Sekjen, dan Anggota dari tabel `members` tanpa akun).
 - Header navbar tengah + hamburger + avatar dropdown.
+- **Integrasi Kalender & Ekspor**:
+  - Simpan langsung ke **Google Calendar** via tautan interaktif.
+  - Unduh file **iCalendar (.ics)** standar RFC 5545 untuk Apple Calendar (iPhone/iPad/Mac), Android, dan Outlook.
+- **WhatsApp Broadcast Generator**:
+  - Salin format broadcast WhatsApp per-kegiatan lengkap dengan emoji, detail waktu, divisi, dan tautan langsung.
+  - Tombol 1-klik **"Salin Jadwal Pekan Ini"** di sidebar untuk rekap agenda sepekan pengurus.
+- **Optimasi SEO & Social Sharing (Open Graph)**:
+  - Dynamic Open Graph image 1200x630 (`/opengraph-image`) untuk preview kartu media sosial (WhatsApp, Telegram, Twitter/X).
+  - Generator otomatis `sitemap.xml` dan `robots.txt` berbasis Next.js 15 App Router.
 
 ## Teknologi
 

@@ -1,10 +1,13 @@
 'use client'
 
+import { useState } from 'react'
+import Swal from 'sweetalert2'
 import type { Event } from '@/lib/supabase/types'
 import { DIVISI_COLORS, DIVISI_LABELS, DEFAULT_COLOR, type Divisi } from '@/lib/constants'
 import { useDivisi } from '@/hooks/useDivisi'
 import { Icon } from '@/components/icons'
 import { formatTime, inDivisiFilter, openEventDetail } from '@/lib/divisi'
+import { generateWeeklyWhatsAppBroadcast, copyToClipboard } from '@/lib/calendar-export'
 
 interface TodayStatsBoardProps {
   stats: {
@@ -16,12 +19,34 @@ interface TodayStatsBoardProps {
 }
 
 export default function TodayStatsBoard({ stats, divisiFilter }: TodayStatsBoardProps) {
+  const [copiedWeekly, setCopiedWeekly] = useState(false)
   const { divisi } = useDivisi()
   const items = divisi.length > 0
     ? divisi
     : (Object.keys(DIVISI_COLORS) as Divisi[]).map((k) => ({ key: k, label: DIVISI_LABELS[k], color: DIVISI_COLORS[k] }))
 
   const todayList = stats.todayEvents.filter((e) => inDivisiFilter(items, e.color, divisiFilter))
+
+  const handleCopyWeekly = async () => {
+    const allEvents = [...stats.todayEvents, ...stats.upcoming]
+    const text = generateWeeklyWhatsAppBroadcast(allEvents)
+    const ok = await copyToClipboard(text)
+    if (ok) {
+      setCopiedWeekly(true)
+      setTimeout(() => setCopiedWeekly(false), 2500)
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+      })
+      Toast.fire({
+        icon: 'success',
+        title: 'Jadwal pekan ini disalin ke clipboard!',
+      })
+    }
+  }
 
   return (
     <section className="rounded-xl card-soft stats-gradient">
@@ -73,6 +98,21 @@ export default function TodayStatsBoard({ stats, divisiFilter }: TodayStatsBoard
             <p className="text-xs text-gray-400">Tidak ada kegiatan hari ini</p>
           </div>
         )}
+      </div>
+
+      {/* Broadcast Jadwal Pekan Ini */}
+      <div className="p-2.5 sm:p-3 bg-gray-50/70 border-t border-gray-100 rounded-b-xl">
+        <button
+          type="button"
+          onClick={handleCopyWeekly}
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold bg-white hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 border border-gray-200 hover:border-emerald-300 transition-all duration-200 shadow-2xs group cursor-pointer"
+          title="Salin rekap agenda 7 hari ke depan untuk dibagikan ke grup WhatsApp"
+        >
+          <span className="text-emerald-600 group-hover:scale-110 transition-transform">
+            <Icon name={copiedWeekly ? 'check' : 'whatsapp'} cls="w-3.5 h-3.5" />
+          </span>
+          <span>{copiedWeekly ? 'Jadwal Pekan Ini Tersalin!' : 'Salin Jadwal Pekan Ini'}</span>
+        </button>
       </div>
     </section>
   )
