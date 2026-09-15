@@ -147,9 +147,9 @@ export default function Navbar() {
             )}
             {/* Logo strip bawah drawer */}
             <div className="mt-2 pt-3 border-t border-gray-100 flex items-center justify-center gap-3 pb-1">
-              <img src="/logo-orbit-impp.png" alt="ORBIT" className="h-5 w-auto object-contain opacity-60" />
+              <img src="/logo-orbit-impp.webp" alt="ORBIT" className="h-5 w-auto object-contain opacity-60" />
               <span className="text-gray-300 text-xs">×</span>
-              <img src="/logo impp.png" alt="IMPP" className="h-5 w-auto object-contain opacity-60" />
+              <img src="/logo-impp.webp" alt="IMPP" className="h-5 w-auto object-contain opacity-60" />
             </div>
           </div>
         </>

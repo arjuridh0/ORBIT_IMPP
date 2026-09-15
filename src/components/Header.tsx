@@ -20,14 +20,14 @@ export default function Header() {
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 min-w-0 lg:static lg:translate-x-0 lg:translate-y-0 flex-shrink-0"
         >
           <img
-            src="/logo-orbit-impp.png"
+            src="/logo-orbit-impp.webp"
             alt="Logo ORBIT IMPP"
             className="h-9 w-auto object-contain hidden lg:block"
           />
           <div className="flex items-center gap-1.5 lg:hidden whitespace-nowrap">
             <span className="text-lg font-black text-[#031b46] tracking-wide">ORBIT</span>
             <img
-              src="/logo-orbit-impp.png"
+              src="/logo-orbit-impp.webp"
               alt="Logo ORBIT IMPP"
               className="h-7 w-auto object-contain"
             />

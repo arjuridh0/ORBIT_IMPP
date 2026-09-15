@@ -2,7 +2,7 @@ export default function OfflinePage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 text-center">
       <img
-        src="/logo-orbit-impp.png"
+        src="/logo-orbit-impp.webp"
         alt="Logo ORBIT IMPP"
         className="h-14 w-auto mb-4 object-contain"
       />

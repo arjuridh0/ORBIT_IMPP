@@ -138,9 +138,9 @@ export default function LoginPage() {
           {/* Header: dual logo ORBIT + IMPP */}
           <div className="flex items-center gap-3 mb-8">
             <div className="flex items-center gap-2">
-              <img src="/logo-orbit-impp.png" alt="ORBIT" className="h-9 w-auto object-contain" />
+              <img src="/logo-orbit-impp.webp" alt="ORBIT" className="h-9 w-auto object-contain" />
               <span className="text-gray-300 text-sm">×</span>
-              <img src="/logo impp.png" alt="IMPP" className="h-9 w-auto object-contain" />
+              <img src="/logo-impp.webp" alt="IMPP" className="h-9 w-auto object-contain" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900 tracking-tight">ORBIT IMPP</h1>

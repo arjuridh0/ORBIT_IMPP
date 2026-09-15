@@ -88,7 +88,7 @@ export default function VisiMisiPage() {
           <div className="inline-flex items-center justify-center bg-white/95 backdrop-blur-md px-6 py-2.5 sm:px-7 sm:py-3 rounded-2xl shadow-sm border border-white/80 mb-4 transition-transform hover:scale-105 duration-200">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo impp.png"
+              src="/logo-impp.webp"
               alt="Logo IMPP UIN Walisongo"
               className="h-12 sm:h-14 w-auto object-contain"
             />

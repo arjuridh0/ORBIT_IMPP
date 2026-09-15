@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import { AuthProvider } from '@/components/AuthProvider'
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
+import InstallPrompt from '@/components/InstallPrompt'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] })
@@ -80,9 +81,9 @@ export default function RootLayout({
             <div className="max-w-[1400px] mx-auto px-4 text-center">
               {/* Dual logo: ORBIT + IMPP */}
               <div className="flex items-center justify-center gap-4 mb-3">
-                <img src="/logo-orbit-impp.png" alt="Logo ORBIT" className="h-8 w-auto object-contain" />
+                <img src="/logo-orbit-impp.webp" alt="Logo ORBIT" className="h-8 w-auto object-contain" />
                 <span className="text-gray-300 font-light text-lg">×</span>
-                <img src="/logo impp.png" alt="Logo IMPP" className="h-8 w-auto object-contain" />
+                <img src="/logo-impp.webp" alt="Logo IMPP" className="h-8 w-auto object-contain" />
               </div>
               <p className="text-sm font-bold text-[#031b46]">
                 ORBIT <span className="text-[#1d75ae]">·</span> IMPP
@@ -99,6 +100,7 @@ export default function RootLayout({
             </div>
           </footer>
         </AuthProvider>
+        <InstallPrompt />
       </body>
     </html>
   )
