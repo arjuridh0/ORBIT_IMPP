@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
-const DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu']
 const ELEVATED_ROLES = ['admin', 'ketua', 'superadmin']
 
 async function requireElevated() {
@@ -44,7 +43,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const allowedRoles = ['admin', 'editor', 'ketua']
   const full_name = body.full_name !== undefined ? String(body.full_name || '').trim() : null
   const role = allowedRoles.includes(body.role) ? body.role : null
-  const divisi = body.divisi !== undefined ? (DIVISI.includes(body.divisi) ? body.divisi : null) : null
+  const divisiInput = body.divisi !== undefined ? String(body.divisi || '').trim() : ''
+  let divisi: string | null = null
+  if (body.divisi !== undefined) {
+    const { data: divisiRows } = await admin.from('divisi').select('key')
+    const validKeys = (divisiRows || []).map((d: { key: string }) => d.key)
+    divisi = validKeys.includes(divisiInput) ? divisiInput : null
+  }
   const jabatan = body.jabatan !== undefined ? String(body.jabatan || '').trim() : null
 
   const patch: Record<string, string> = {}

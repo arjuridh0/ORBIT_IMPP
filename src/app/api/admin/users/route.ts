@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 
-const DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu']
 const ELEVATED_ROLES = ['admin', 'ketua', 'superadmin']
 
 async function requireAdmin() {
@@ -81,8 +80,8 @@ export async function POST(request: NextRequest) {
   const password = String(body.password || '')
   const allowedRoles = ['admin', 'editor', 'ketua']
   const role = allowedRoles.includes(body.role) ? body.role : 'editor'
-  const divisi = DIVISI.includes(body.divisi) ? body.divisi : null
   const jabatan = body.jabatan ? String(body.jabatan).trim() : null
+  const divisiInput = String(body.divisi || '').trim()
 
   if (!full_name || !email || !password) {
     return NextResponse.json({ error: 'Nama, email, dan password wajib diisi' }, { status: 400 })
@@ -90,7 +89,11 @@ export async function POST(request: NextRequest) {
   if (password.length < 6) {
     return NextResponse.json({ error: 'Password minimal 6 karakter' }, { status: 400 })
   }
-  if (!divisi) {
+
+  // Validasi divisi dari DB (full-dynamic)
+  const { data: divisiRows } = await admin.from('divisi').select('key')
+  const validKeys = (divisiRows || []).map((d: { key: string }) => d.key)
+  if (!validKeys.includes(divisiInput)) {
     return NextResponse.json({ error: 'Divisi tidak valid' }, { status: 400 })
   }
 
@@ -106,12 +109,12 @@ export async function POST(request: NextRequest) {
 
   const { error: profileErr } = await admin
     .from('profiles')
-    .insert({ id: user.id, full_name, role, jabatan, divisi })
+    .insert({ id: user.id, full_name, role, jabatan, divisi: divisiInput })
 
   if (profileErr) {
     await admin.auth.admin.deleteUser(user.id)
     return NextResponse.json({ error: profileErr.message }, { status: 400 })
   }
 
-  return NextResponse.json({ user: { id: user.id, email, full_name, role, jabatan, divisi } })
+  return NextResponse.json({ user: { id: user.id, email, full_name, role, jabatan, divisi: divisiInput } })
 }

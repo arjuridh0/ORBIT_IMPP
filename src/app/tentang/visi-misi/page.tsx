@@ -93,9 +93,8 @@ export default function VisiMisiPage() {
               className="h-12 sm:h-14 w-auto object-contain"
             />
           </div>
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-200">Tentang IMPP</p>
           <h1 className="text-3xl sm:text-4xl font-black mt-2 tracking-tight">Visi &amp; Misi</h1>
-          <p className="text-blue-100 mt-3 max-w-xl mx-auto">Landasan gerak dan arah organisasi.</p>
+          <p className="text-blue-100 mt-3 max-w-xl mx-auto">Landasan gerak dan cita-cita bersama Ikatan Mahasiswa Pelajar Pemalang.</p>
         </div>
       </section>
 

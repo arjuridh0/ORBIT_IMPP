@@ -5,10 +5,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import { Icon } from '@/components/icons'
-import { DIVISI_LABELS, type Divisi } from '@/lib/constants'
+import { useDivisi } from '@/hooks/useDivisi'
 
 export default function ProfileMenu() {
   const { profile, user, logout, loading } = useAuth()
+  const { divisi } = useDivisi()
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -24,7 +25,8 @@ export default function ProfileMenu() {
   if (loading || !profile) return null
 
   const displayName = profile.full_name || user?.email || ''
-  const divisiLabel = DIVISI_LABELS[profile.divisi as Divisi] || profile.divisi
+  const divisiLabel = divisi.find((d) => d.key === profile.divisi)?.label ?? profile.divisi
+
 
   return (
     <div ref={ref} className="relative">

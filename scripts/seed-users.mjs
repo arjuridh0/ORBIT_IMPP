@@ -11,29 +11,32 @@
 import { readFileSync } from 'node:fs'
 import { createClient } from '@supabase/supabase-js'
 
-// Email: NAMA@orbit.id (internal dulu, bisa diganti ke email asli lewat Kelola User nanti)
+// Email: JABATAN@orbit.id (internal, bisa diganti ke email asli lewat Kelola User nanti).
+// full_name & jabatan = data real kepengurusan IMPP 2026.
 const USERS = [
-  { full_name: 'Ketua Umum', jabatan: 'Ketua Umum', role: 'ketua', divisi: 'bph', email: 'ketum@orbit.id' },
-  { full_name: 'Wakil Ketua', jabatan: 'Wakil Ketua', role: 'admin', divisi: 'bph', email: 'waketum@orbit.id' },
-  { full_name: 'Sekretaris 1', jabatan: 'Sekretaris 1', role: 'admin', divisi: 'bph', email: 'sekre@orbit.id' },
-  { full_name: 'Sekretaris 2', jabatan: 'Sekretaris 2', role: 'admin', divisi: 'bph', email: 'sekre2@orbit.id' },
-  { full_name: 'Bendahara 1', jabatan: 'Bendahara 1', role: 'admin', divisi: 'bph', email: 'bendahara@orbit.id' },
-  { full_name: 'Bendahara 2', jabatan: 'Bendahara 2', role: 'admin', divisi: 'bph', email: 'bendahara2@orbit.id' },
-  { full_name: 'Koor Kaderisasi', jabatan: 'Koor Kaderisasi', role: 'editor', divisi: 'kaderisasi', email: 'kaderisasi@orbit.id' },
-  { full_name: 'Sekjen Kaderisasi', jabatan: 'Sekjen Kaderisasi', role: 'editor', divisi: 'kaderisasi', email: 'sekjen.kaderisasi@orbit.id' },
-  { full_name: 'Koor Sosma', jabatan: 'Koor Sosma', role: 'editor', divisi: 'sosma', email: 'sosma@orbit.id' },
-  { full_name: 'Sekjen Sosma', jabatan: 'Sekjen Sosma', role: 'editor', divisi: 'sosma', email: 'sekjen.sosma@orbit.id' },
-  { full_name: 'Koor Bakmi', jabatan: 'Koor Bakmi', role: 'editor', divisi: 'bakmi', email: 'bakmi@orbit.id' },
-  { full_name: 'Sekjen Bakmi', jabatan: 'Sekjen Bakmi', role: 'editor', divisi: 'bakmi', email: 'sekjen.bakmi@orbit.id' },
-  { full_name: 'Koor DPW', jabatan: 'Koor DPW', role: 'editor', divisi: 'dpw', email: 'dpw@orbit.id' },
-  { full_name: 'Sekjen DPW', jabatan: 'Sekjen DPW', role: 'editor', divisi: 'dpw', email: 'sekjen.dpw@orbit.id' },
-  { full_name: 'Koor Inforsi', jabatan: 'Koor Inforsi', role: 'editor', divisi: 'inforsi', email: 'inforsi@orbit.id' },
-  { full_name: 'Sekjen Inforsi', jabatan: 'Sekjen Inforsi', role: 'editor', divisi: 'inforsi', email: 'sekjen.inforsi@orbit.id' },
-  { full_name: 'Koor Deplu', jabatan: 'Koor Deplu', role: 'editor', divisi: 'deplu', email: 'deplu@orbit.id' },
-  { full_name: 'Sekjen Deplu', jabatan: 'Sekjen Deplu', role: 'editor', divisi: 'deplu', email: 'sekjen.deplu@orbit.id' },
+  { full_name: 'Hafid Triasnoko', jabatan: 'Ketua Umum', role: 'ketua', divisi: 'bph', email: 'ketum@orbit.id' },
+  { full_name: 'Nizar Dwi Nugroho', jabatan: 'Wakil Ketua', role: 'admin', divisi: 'bph', email: 'waketum@orbit.id' },
+  { full_name: 'Siska Isrotun Nisa', jabatan: 'Sekretaris 1', role: 'admin', divisi: 'bph', email: 'sekre@orbit.id' },
+  { full_name: 'Nabilatul Jinan', jabatan: 'Sekretaris 2', role: 'admin', divisi: 'bph', email: 'sekre2@orbit.id' },
+  { full_name: 'Sabila Shinta Ayu Indrifiatin', jabatan: 'Bendahara 1', role: 'admin', divisi: 'bph', email: 'bendahara@orbit.id' },
+  { full_name: 'Resti Sasi Kirana', jabatan: 'Bendahara 2', role: 'admin', divisi: 'bph', email: 'bendahara2@orbit.id' },
+  { full_name: 'Rita Wulan Sari', jabatan: 'Koor Kaderisasi', role: 'editor', divisi: 'kaderisasi', email: 'kaderisasi@orbit.id' },
+  { full_name: 'Mailan Malik Masobih', jabatan: 'Sekjen Kaderisasi', role: 'editor', divisi: 'kaderisasi', email: 'sekjen.kaderisasi@orbit.id' },
+  { full_name: 'Khaedar Syah At-Taufiqi', jabatan: 'Koor Sosma', role: 'editor', divisi: 'sosma', email: 'sosma@orbit.id' },
+  { full_name: 'Rafi Ahmad Syafik', jabatan: 'Sekjen Sosma', role: 'editor', divisi: 'sosma', email: 'sekjen.sosma@orbit.id' },
+  { full_name: 'Ahmad Ashari Anhar', jabatan: 'Koor Bakmi', role: 'editor', divisi: 'bakmi', email: 'bakmi@orbit.id' },
+  { full_name: 'Putra Azidna Moovic', jabatan: 'Sekjen Bakmi', role: 'editor', divisi: 'bakmi', email: 'sekjen.bakmi@orbit.id' },
+  { full_name: 'Lutfi Ardiansyah', jabatan: 'Koor DPW', role: 'editor', divisi: 'dpw', email: 'dpw@orbit.id' },
+  { full_name: 'Anggun Desiana', jabatan: 'Sekjen DPW', role: 'editor', divisi: 'dpw', email: 'sekjen.dpw@orbit.id' },
+  { full_name: 'Fryzaino Arya Gumilang', jabatan: 'Koor Inforsi', role: 'editor', divisi: 'inforsi', email: 'inforsi@orbit.id' },
+  { full_name: 'Hawa Mutiara Rahmah', jabatan: 'Sekjen Inforsi', role: 'editor', divisi: 'inforsi', email: 'sekjen.inforsi@orbit.id' },
+  { full_name: 'M. Alfin Nizar', jabatan: 'Koor Deplu', role: 'editor', divisi: 'deplu', email: 'deplu@orbit.id' },
+  { full_name: 'Desylia Widyasari', jabatan: 'Sekjen Deplu', role: 'editor', divisi: 'deplu', email: 'sekjen.deplu@orbit.id' },
+  { full_name: 'Muhammad Rosyid Ridho', jabatan: 'Koor KWU', role: 'editor', divisi: 'kwu', email: 'kwu@orbit.id' },
+  { full_name: 'Ghifari Zaka Wali', jabatan: 'Sekjen KWU', role: 'editor', divisi: 'kwu', email: 'sekjen.kwu@orbit.id' },
 ]
 
-const VALID_DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu']
+const VALID_DIVISI = ['bph', 'kaderisasi', 'sosma', 'bakmi', 'dpw', 'inforsi', 'deplu', 'kwu']
 
 function loadEnv() {
   const txt = readFileSync(new URL('../.env.local', import.meta.url), 'utf8')

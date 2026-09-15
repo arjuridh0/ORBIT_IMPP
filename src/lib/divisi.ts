@@ -1,6 +1,7 @@
-import { DEFAULT_COLOR } from '@/lib/constants'
 import type { DivisiInfo } from '@/hooks/useDivisi'
 import type { Event } from '@/lib/supabase/types'
+
+export const DEFAULT_COLOR = '#2563eb'
 
 export function findDivisiByColor(items: DivisiInfo[], color: string | null) {
   const c = (color || DEFAULT_COLOR).toLowerCase()

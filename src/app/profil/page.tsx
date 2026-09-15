@@ -7,21 +7,22 @@ import Header from '@/components/Header'
 import { useAuth } from '@/components/AuthProvider'
 import { useDivisi } from '@/hooks/useDivisi'
 import { Icon } from '@/components/icons'
-import { DIVISI_COLORS } from '@/lib/constants'
+import { DEFAULT_COLOR } from '@/lib/divisi'
 import { supabase } from '@/lib/supabase/client'
-
-const COLOR_PRESETS = Object.values(DIVISI_COLORS).filter((c, i, arr) => arr.indexOf(c) === i)
 
 export default function ProfilPage() {
   const { profile, user, loading, refreshProfile, logout } = useAuth()
   const { divisi, refreshDivisi } = useDivisi()
+
+  const colorPresets = divisi.map((d) => d.color).filter((c, i, arr) => arr.indexOf(c) === i)
 
   const [fullName, setFullName] = useState('')
   const [jabatan, setJabatan] = useState('')
   const [savingProfile, setSavingProfile] = useState(false)
 
   const [editKey, setEditKey] = useState('')
-  const [color, setColor] = useState<string>(DIVISI_COLORS.bph)
+  const [color, setColor] = useState<string>(DEFAULT_COLOR)
+
   const [savingColor, setSavingColor] = useState(false)
 
   const [oldPw, setOldPw] = useState('')
@@ -304,7 +305,7 @@ export default function ProfilPage() {
             <div>
               <span className="block text-sm font-medium text-gray-700 mb-2">Pilih Warna</span>
               <div className="flex flex-wrap items-center gap-2.5">
-                {COLOR_PRESETS.map((c) => (
+                {colorPresets.map((c) => (
                   <button
                     key={c}
                     type="button"

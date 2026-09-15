@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest) {
   )
 
   for (const [key, value] of validPairs) {
-    const { error } = await supabase.from('konten').update({ value }).eq('key', key)
+    const { error } = await supabase.from('konten').upsert({ key, value }, { onConflict: 'key' })
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   }
 

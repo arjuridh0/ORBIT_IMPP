@@ -55,6 +55,7 @@ export default function StrukturPage() {
   const { profile } = useAuth()
   const [pengurus, setPengurus] = useState<Pengurus[]>([])
   const [members, setMembers] = useState<Member[]>([])
+  const [konten, setKonten] = useState<Record<string, string>>({})
   const [loadingData, setLoadingData] = useState(true)
   const [editTarget, setEditTarget] = useState<Pengurus | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -89,19 +90,23 @@ export default function StrukturPage() {
   const loadAll = useCallback(async () => {
     if (!supabase) return
     try {
-      const [pResult, mRes] = await Promise.all([
+      const [pResult, mRes, kRes] = await Promise.all([
         supabase.from('profiles').select('id, full_name, role, jabatan, divisi, avatar_url').order('full_name'),
         fetch('/api/members'),
+        fetch('/api/konten'),
       ])
       const mData = await mRes.json()
+      const kData = await kRes.json()
       setPengurus((pResult.data as Pengurus[]) || [])
       setMembers(mData.members || [])
+      setKonten(kData.konten || {})
     } finally {
       setLoadingData(false)
     }
   }, [])
 
   useEffect(() => { loadAll() }, [loadAll])
+
 
   // Role categorizations
   const ketua = useMemo(() =>
@@ -360,9 +365,12 @@ export default function StrukturPage() {
               className="h-12 sm:h-14 w-auto object-contain"
             />
           </div>
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-200">Tentang IMPP</p>
           <h1 className="text-3xl sm:text-4xl font-black mt-1 tracking-tight">Struktur Organisasi</h1>
-          <p className="text-blue-100 mt-2 max-w-xl mx-auto text-sm">Bagan kepengurusan ORBIT IMPP periode berjalan.</p>
+          <p className="text-blue-100 mt-2 max-w-xl mx-auto text-sm">
+            {konten.kabinet_nama && konten.kabinet_periode
+              ? `Kepengurusan IMPP Kabinet ${konten.kabinet_nama} Periode ${konten.kabinet_periode}`
+              : (konten.kabinet_desc || 'Bagan kepengurusan IMPP periode berjalan.')}
+          </p>
           {isBph && (
             <div className="inline-flex items-center gap-1.5 mt-4 px-3 py-1 bg-blue-800/60 border border-blue-400/40 rounded-full text-xs text-blue-100 font-medium">
               <Icon name="info" cls="w-3.5 h-3.5 text-blue-300" />

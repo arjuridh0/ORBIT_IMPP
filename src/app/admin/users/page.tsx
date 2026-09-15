@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
@@ -7,7 +7,6 @@ import Header from '@/components/Header'
 import { useAuth } from '@/components/AuthProvider'
 import { Icon } from '@/components/icons'
 import { useDivisi } from '@/hooks/useDivisi'
-import { DIVISI_COLORS, DIVISI_LABELS, type Divisi } from '@/lib/constants'
 
 interface AdminUser {
   id: string
@@ -24,14 +23,12 @@ const emptyForm = { full_name: '', email: '', password: '', jabatan: '', role: '
 export default function AdminUsersPage() {
   const { profile, loading } = useAuth()
   const { divisi } = useDivisi()
-  const items = divisi.length > 0
-    ? divisi
-    : (Object.keys(DIVISI_COLORS) as Divisi[]).map((k) => ({ key: k, label: DIVISI_LABELS[k], color: DIVISI_COLORS[k] }))
   const [users, setUsers] = useState<AdminUser[]>([])
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showFormPw, setShowFormPw] = useState(false)
+
 
   // Avatar Management for BPH
   const [avatarTarget, setAvatarTarget] = useState<AdminUser | null>(null)
@@ -175,7 +172,7 @@ export default function AdminUsersPage() {
   }
 
   function openEdit(u: AdminUser) {
-    const divisiOptions = items
+    const divisiOptions = divisi
       .map((d) => `<option value="${d.key}" ${d.key === u.divisi ? 'selected' : ''}>${d.label}</option>`)
       .join('')
     Swal.fire({
@@ -343,7 +340,7 @@ export default function AdminUsersPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex divisi-center justify-center">
           <p className="text-sm text-gray-500">Memuat...</p>
         </div>
       </div>
@@ -354,7 +351,7 @@ export default function AdminUsersPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
+        <div className="flex-1 flex flex-col divisi-center justify-center gap-2 px-4">
           <p className="text-sm text-gray-700">Silakan masuk terlebih dahulu.</p>
           <Link href="/login" className="text-sm font-semibold text-blue-600 hover:underline">Halaman Masuk</Link>
         </div>
@@ -366,7 +363,7 @@ export default function AdminUsersPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
+        <div className="flex-1 flex flex-col divisi-center justify-center gap-2 px-4">
           <p className="text-sm text-gray-700">Akses ditolak. Halaman ini hanya untuk pengurus inti.</p>
           <Link href="/" className="text-sm font-semibold text-blue-600 hover:underline">Kembali ke kalender</Link>
         </div>
@@ -389,15 +386,15 @@ export default function AdminUsersPage() {
 
       <main className="max-w-[1000px] mx-auto px-4 sm:px-6 py-6 pb-10">
         {/* Tombol Tambah User */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+        <div className="flex justify-between divisi-center mb-4">
+          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide flex divisi-center gap-2">
             <span className="text-blue-600"><Icon name="users" /></span>
             Daftar User ({users.length})
           </h2>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="btn btn-primary btn-sm flex items-center gap-1.5"
+            className="btn btn-primary btn-sm flex divisi-center gap-1.5"
           >
             <Icon name="plus" cls="w-3.5 h-3.5" />
             Tambah User
@@ -410,12 +407,12 @@ export default function AdminUsersPage() {
             <div className="sm:hidden space-y-3">
               {users.map((u) => (
                 <div key={u.id} className="border border-gray-100 rounded-xl p-4 space-y-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex divisi-center gap-3">
                     {u.avatar_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={u.avatar_url} alt={u.full_name} className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-200 flex-shrink-0" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex divisi-center justify-center flex-shrink-0">
                         {(u.full_name || '?').charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -425,21 +422,21 @@ export default function AdminUsersPage() {
                       {u.jabatan && <p className="text-xs text-gray-400">{u.jabatan}</p>}
                     </div>
                   </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex divisi-center gap-2">
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                         u.role === 'ketua' ? 'bg-purple-100 text-purple-700' :
                         u.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
                       }`}>
                         {u.role === 'ketua' ? 'Ketua' : u.role === 'admin' ? 'Admin' : 'Editor'}
                       </span>
-                      {items.some((d) => d.key === u.divisi) && (
-                        <span className="inline-flex items-center gap-1 text-xs text-gray-600">
-                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: items.find((d) => d.key === u.divisi)?.color }} />
-                          {items.find((d) => d.key === u.divisi)?.label}
+                      {divisi.some((d) => d.key === u.divisi) && (
+                        <span className="inline-flex divisi-center gap-1 text-xs text-gray-600">
+                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: divisi.find((d) => d.key === u.divisi)?.color }} />
+                          {divisi.find((d) => d.key === u.divisi)?.label}
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5 flex-wrap">
+                    <div className="flex divisi-center gap-1.5 flex-wrap">
                       <button type="button" onClick={() => openAvatar(u)} className="btn btn-outline btn-sm">Foto</button>
                       <button type="button" onClick={() => openEdit(u)} className="btn btn-outline btn-sm">Edit</button>
                       <button type="button" onClick={() => openResetPassword(u)} className="btn btn-outline btn-sm">Reset PW</button>
@@ -471,12 +468,12 @@ export default function AdminUsersPage() {
                   {users.map((u) => (
                     <tr key={u.id} className="border-b border-gray-50 last:border-0 row-zebra hover:bg-blue-50/30 transition-colors">
                       <td className="py-2.5 pr-3 font-semibold text-gray-900">
-                        <div className="flex items-center gap-2">
+                        <div className="flex divisi-center gap-2">
                           {u.avatar_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={u.avatar_url} alt={u.full_name} className="w-7 h-7 rounded-full object-cover ring-1 ring-gray-200 flex-shrink-0" />
                           ) : (
-                            <div className="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex divisi-center justify-center flex-shrink-0">
                               {(u.full_name || '?').charAt(0).toUpperCase()}
                             </div>
                           )}
@@ -491,17 +488,17 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="py-2.5 pr-3">
-                        {items.some((d) => d.key === u.divisi) ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: items.find((d) => d.key === u.divisi)?.color }} />
-                            {items.find((d) => d.key === u.divisi)?.label}
+                        {divisi.some((d) => d.key === u.divisi) ? (
+                          <span className="inline-flex divisi-center gap-1.5 text-xs text-gray-600">
+                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: divisi.find((d) => d.key === u.divisi)?.color }} />
+                            {divisi.find((d) => d.key === u.divisi)?.label}
                           </span>
                         ) : (
                           <span className="text-xs text-gray-400">{u.divisi}</span>
                         )}
                       </td>
                       <td className="py-2.5">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex divisi-center gap-1.5">
                           <button type="button" onClick={() => openAvatar(u)} className="btn btn-outline btn-sm min-h-[38px]" title="Kelola foto profil">Foto</button>
                           <button type="button" onClick={() => openEdit(u)} className="btn btn-outline btn-sm min-h-[38px]">Edit</button>
                           <button type="button" onClick={() => openResetPassword(u)} className="btn btn-outline btn-sm min-h-[38px]">Reset PW</button>
@@ -527,7 +524,7 @@ export default function AdminUsersPage() {
 
       {/* Modal Kelola Foto Profil */}
       {avatarTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+        <div className="fixed inset-0 z-50 flex divisi-center justify-center bg-black/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
             <h3 className="text-lg font-bold text-gray-900">Kelola Foto Profil</h3>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -535,8 +532,8 @@ export default function AdminUsersPage() {
             </p>
 
             <div className="my-6 flex justify-center">
-              <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-blue-600 to-indigo-500 shadow flex items-center justify-center">
-                <div className="w-full h-full rounded-full bg-white p-0.5 overflow-hidden flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-blue-600 to-indigo-500 shadow flex divisi-center justify-center">
+                <div className="w-full h-full rounded-full bg-white p-0.5 overflow-hidden flex divisi-center justify-center">
                   {avatarPreview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -545,7 +542,7 @@ export default function AdminUsersPage() {
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold">
+                    <div className="w-full h-full rounded-full bg-blue-600 flex divisi-center justify-center text-white text-3xl font-bold">
                       {(avatarTarget.full_name || '?').charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -566,7 +563,7 @@ export default function AdminUsersPage() {
                 type="button"
                 onClick={() => avatarInputRef.current?.click()}
                 disabled={savingAvatar}
-                className="w-full btn btn-outline btn-sm py-2 flex items-center justify-center gap-1.5"
+                className="w-full btn btn-outline btn-sm py-2 flex divisi-center justify-center gap-1.5"
               >
                 <Icon name="camera" cls="w-4 h-4 text-blue-600" />
                 <span>{avatarPreview ? 'Pilih Foto Lain' : 'Pilih Foto (JPG/PNG)'}</span>
@@ -612,14 +609,14 @@ export default function AdminUsersPage() {
 
       {/* Modal Tambah User */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex divisi-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-scaleUp">
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex divisi-center justify-between mb-5">
               <h3 className="text-lg font-bold text-gray-900">Tambah User</h3>
               <button
                 type="button"
                 onClick={() => { setShowAddModal(false); setForm(emptyForm) }}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100"
+                className="w-8 h-8 rounded-full flex divisi-center justify-center text-gray-400 hover:bg-gray-100"
               >
                 <Icon name="close" cls="w-4 h-4" />
               </button>
@@ -654,7 +651,7 @@ export default function AdminUsersPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Divisi</label>
                   <select value={form.divisi} onChange={(e) => setForm({ ...form, divisi: e.target.value })} className="ds-input">
-                    {items.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
+                    {divisi.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
                   </select>
                 </div>
               </div>
@@ -673,3 +670,4 @@ export default function AdminUsersPage() {
     </div>
   )
 }
+

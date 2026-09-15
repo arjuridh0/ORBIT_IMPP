@@ -11,11 +11,13 @@ export default function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [tipsOpen, setTipsOpen] = useState(false)
+  const [adminOpen, setAdminOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setOpen(false)
     setTipsOpen(false)
+    setAdminOpen(false)
   }, [pathname])
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function Navbar() {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setOpen(false)
         setTipsOpen(false)
+        setAdminOpen(false)
       }
     }
     document.addEventListener('mousedown', onClick)
@@ -46,42 +49,8 @@ export default function Navbar() {
       active ? 'text-blue-700 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
     }`
 
-  const Kalender = (
-    <Link href="/" className={linkCls(pathname === '/')}>
-      Kalender
-    </Link>
-  )
-
-  const VisiMisi = (
-    <Link href="/tentang/visi-misi" className={itemCls(pathname.startsWith('/tentang/visi-misi'))}>
-      Visi Misi
-    </Link>
-  )
-
-  const Struktur = (
-    <Link href="/tentang/struktur" className={itemCls(pathname.startsWith('/tentang/struktur'))}>
-      Profil Kepengurusan
-    </Link>
-  )
-
-  const KelolaUser = (
-    <Link href="/admin/users" className={linkCls(pathname.startsWith('/admin'))}>
-      Kelola User
-    </Link>
-  )
-
-  const showKelola = !loading && (profile?.role === 'admin' || profile?.role === 'ketua' || profile?.role === 'superadmin')
+  const showAdmin = !loading && profile && ['admin', 'ketua', 'superadmin'].includes(profile.role)
   const showMasuk = !loading && !profile
-
-  const Masuk = (
-    <Link
-      href="/login"
-      className="flex items-center gap-2 text-[15px] font-medium px-4 py-4 rounded-lg text-gray-700 hover:bg-gray-50"
-    >
-      <Icon name="key" cls="w-5 h-5" />
-      Masuk
-    </Link>
-  )
 
   return (
     <nav ref={navRef} className="relative flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
@@ -98,7 +67,9 @@ export default function Navbar() {
 
       {/* Desktop nav tengah */}
       <ul className="hidden lg:flex items-center gap-0.5">
-        <li>{Kalender}</li>
+        <li>
+          <Link href="/" className={linkCls(pathname === '/')}>Kalender</Link>
+        </li>
         <li className="relative">
           <button
             type="button"
@@ -112,12 +83,31 @@ export default function Navbar() {
           </button>
           {tipsOpen && (
             <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl border border-gray-100 shadow-lg p-1.5 z-50">
-              {VisiMisi}
-              {Struktur}
+              <Link href="/tentang/visi-misi" className={itemCls(pathname.startsWith('/tentang/visi-misi'))}>Visi Misi</Link>
+              <Link href="/tentang/struktur" className={itemCls(pathname.startsWith('/tentang/struktur'))}>Profil Kepengurusan</Link>
             </div>
           )}
         </li>
-        {showKelola && <li>{KelolaUser}</li>}
+        {showAdmin && (
+          <li className="relative">
+            <button
+              type="button"
+              onClick={() => setAdminOpen(!adminOpen)}
+              aria-haspopup="true"
+              aria-expanded={adminOpen}
+              className={`flex items-center gap-1 ${linkCls(pathname.startsWith('/admin'))}`}
+            >
+              Admin
+              <Icon name="chevron" cls={`w-3.5 h-3.5 transition-transform ${adminOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {adminOpen && (
+              <div className="absolute left-0 mt-2 w-44 bg-white rounded-xl border border-gray-100 shadow-lg p-1.5 z-50">
+                <Link href="/admin/users" className={itemCls(pathname === '/admin/users')}>Kelola User</Link>
+                <Link href="/admin/impp" className={itemCls(pathname === '/admin/impp')}>Kelola IMPP</Link>
+              </div>
+            )}
+          </li>
+        )}
       </ul>
 
       {/* Drawer mobile & tablet */}
@@ -130,20 +120,20 @@ export default function Navbar() {
             aria-hidden
           />
           <div className="lg:hidden fixed rounded-2xl left-3 right-3 top-[72px] bg-white border border-gray-100 shadow-xl p-2 space-y-0.5 z-50">
-            {showMasuk && Masuk}
-            <Link href="/" className={drawerCls(pathname === '/')}>
-              Kalender
-            </Link>
-            <Link href="/tentang/visi-misi" className={drawerCls(pathname.startsWith('/tentang/visi-misi'))}>
-              Visi Misi
-            </Link>
-            <Link href="/tentang/struktur" className={drawerCls(pathname.startsWith('/tentang/struktur'))}>
-              Profil Kepengurusan
-            </Link>
-            {showKelola && (
-              <Link href="/admin/users" className={drawerCls(pathname.startsWith('/admin'))}>
-                Kelola User
+            {showMasuk && (
+              <Link href="/login" className="flex items-center gap-2 text-[15px] font-medium px-4 py-4 rounded-lg text-gray-700 hover:bg-gray-50">
+                <Icon name="key" cls="w-5 h-5" />
+                Masuk
               </Link>
+            )}
+            <Link href="/" className={drawerCls(pathname === '/')}>Kalender</Link>
+            <Link href="/tentang/visi-misi" className={drawerCls(pathname.startsWith('/tentang/visi-misi'))}>Visi Misi</Link>
+            <Link href="/tentang/struktur" className={drawerCls(pathname.startsWith('/tentang/struktur'))}>Profil Kepengurusan</Link>
+            {showAdmin && (
+              <>
+                <Link href="/admin/users" className={drawerCls(pathname === '/admin/users')}>Kelola User</Link>
+                <Link href="/admin/impp" className={drawerCls(pathname === '/admin/impp')}>Kelola IMPP</Link>
+              </>
             )}
             {/* Logo strip bawah drawer */}
             <div className="mt-2 pt-3 border-t border-gray-100 flex items-center justify-center gap-3 pb-1">

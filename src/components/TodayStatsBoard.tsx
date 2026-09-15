@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import type { Event } from '@/lib/supabase/types'
-import { DIVISI_COLORS, DIVISI_LABELS, DEFAULT_COLOR, type Divisi } from '@/lib/constants'
+import { DEFAULT_COLOR } from '@/lib/divisi'
 import { useDivisi } from '@/hooks/useDivisi'
 import { Icon } from '@/components/icons'
 import { formatTime, inDivisiFilter, openEventDetail } from '@/lib/divisi'
@@ -21,11 +21,9 @@ interface TodayStatsBoardProps {
 export default function TodayStatsBoard({ stats, divisiFilter }: TodayStatsBoardProps) {
   const [copiedWeekly, setCopiedWeekly] = useState(false)
   const { divisi } = useDivisi()
-  const items = divisi.length > 0
-    ? divisi
-    : (Object.keys(DIVISI_COLORS) as Divisi[]).map((k) => ({ key: k, label: DIVISI_LABELS[k], color: DIVISI_COLORS[k] }))
 
-  const todayList = stats.todayEvents.filter((e) => inDivisiFilter(items, e.color, divisiFilter))
+  const todayList = stats.todayEvents.filter((e) => inDivisiFilter(divisi, e.color, divisiFilter))
+
 
   const handleCopyWeekly = async () => {
     const allEvents = [...stats.todayEvents, ...stats.upcoming]

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { DIVISI_COLORS, DIVISI_LABELS, type Divisi } from '@/lib/constants'
 import { useDivisi } from '@/hooks/useDivisi'
 import { Icon } from '@/components/icons'
 
@@ -15,10 +14,6 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
   const [open, setOpen] = useState(false)
   const boxRef = useRef<HTMLDivElement>(null)
 
-  const items = divisi.length > 0
-    ? divisi
-    : (Object.keys(DIVISI_COLORS) as Divisi[]).map((k) => ({ key: k, label: DIVISI_LABELS[k], color: DIVISI_COLORS[k] }))
-
   useEffect(() => {
     if (!open) return
     const onDoc = (e: MouseEvent) => {
@@ -29,10 +24,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
   }, [open])
 
   const toggle = (key: string) => {
-    if (!divisiFilter) {
-      onFilterChange([key])
-      return
-    }
+    if (!divisiFilter) { onFilterChange([key]); return }
     if (divisiFilter.includes(key)) {
       onFilterChange(divisiFilter.length === 1 ? null : divisiFilter.filter((k) => k !== key))
     } else {
@@ -43,7 +35,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
   const active = (key: string) => divisiFilter?.includes(key) ?? false
   const selected = divisiFilter ?? []
   const selectedLabel = selected.length === 1
-    ? (items.find((d) => d.key === selected[0])?.label ?? 'Divisi')
+    ? (divisi.find((d) => d.key === selected[0])?.label ?? 'Divisi')
     : `${selected.length} divisi`
 
   return (
@@ -66,24 +58,20 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
       <p className="hidden md:block text-[10px] text-gray-400 mb-2">Klik divisi untuk filter kalender</p>
 
       <div className="hidden md:grid grid-cols-2 gap-1">
-        {items.map((d) => {
-          const key = d.key
-          const isActive = active(key)
+        {divisi.map((d) => {
+          const isActive = active(d.key)
           const dimmed = !!divisiFilter && !isActive
           return (
             <button
-              key={key}
+              key={d.key}
               type="button"
-              onClick={() => toggle(key)}
+              onClick={() => toggle(d.key)}
               aria-pressed={isActive}
               className={`flex items-center gap-1.5 px-2.5 py-2 min-h-[38px] rounded-full text-left transition-all duration-200 ${
                 isActive ? 'bg-blue-50 chip-inset scale-[1.02]' : 'hover:bg-gray-50 hover:scale-[1.02]'
               } ${dimmed ? 'opacity-35' : ''}`}
             >
-              <span
-                className="inline-block w-2 h-2 rounded-full flex-shrink-0"
-                style={{ backgroundColor: d.color }}
-              />
+              <span className="inline-block w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
               <span className="text-xs font-medium text-gray-700 truncate">{d.label}</span>
             </button>
           )
@@ -102,7 +90,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
               <>
                 <span className="flex gap-1 flex-shrink-0">
                   {selected.map((k) => {
-                    const d = items.find((x) => x.key === k)
+                    const d = divisi.find((x) => x.key === k)
                     return d ? <span key={k} className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} /> : null
                   })}
                 </span>
@@ -122,7 +110,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
 
         {open && (
           <div className="absolute z-50 mt-1 w-full max-h-64 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg">
-            {items.map((d) => {
+            {divisi.map((d) => {
               const isActive = active(d.key)
               return (
                 <button
@@ -134,9 +122,7 @@ export default function DivisiFilter({ divisiFilter, onFilterChange }: DivisiFil
                 >
                   <span
                     className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border text-white"
-                    style={isActive
-                      ? { backgroundColor: d.color, borderColor: d.color }
-                      : { borderColor: '#d1d5db' }}
+                    style={isActive ? { backgroundColor: d.color, borderColor: d.color } : { borderColor: '#d1d5db' }}
                   >
                     {isActive && (
                       <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">

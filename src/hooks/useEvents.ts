@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import type { Event, EventInsert, EventUpdate } from '@/lib/supabase/types'
-import { DEFAULT_COLOR } from '@/lib/constants'
+import { DEFAULT_COLOR } from '@/lib/divisi'
 
 // ===================================
 // TYPES

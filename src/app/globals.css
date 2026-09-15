@@ -215,16 +215,6 @@ body {
   box-shadow: inset 3px 3px 6px rgba(163, 177, 198, 0.5), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
 }
 
-.neu-pop {
-  box-shadow: 4px 4px 10px rgba(37, 99, 235, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.9);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.neu-pop:active {
-  transform: translateY(1px);
-  box-shadow: inset 3px 3px 6px rgba(30, 58, 138, 0.35), inset -2px -2px 5px rgba(255, 255, 255, 0.4);
-}
-
 /* ===================================== */
 /* BUTTON TOKENS (satu bahasa desain)    */
 /* ===================================== */
@@ -273,23 +263,6 @@ body {
 .btn-primary:active:not(:disabled) {
   background: #1d4ed8;
   box-shadow: inset 4px 4px 8px rgba(30, 58, 138, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 0.35);
-}
-
-/* Soft — netral di atas card-soft */
-.btn-soft {
-  background: #e9eef7;
-  color: #334155;
-  box-shadow: 4px 4px 10px rgba(163, 177, 198, 0.45), -3px -3px 8px rgba(255, 255, 255, 0.9);
-}
-
-.btn-soft:hover:not(:disabled) {
-  background: #dfe7f3;
-  box-shadow: 5px 5px 13px rgba(163, 177, 198, 0.5), -3px -3px 8px rgba(255, 255, 255, 0.9);
-}
-
-.btn-soft:active:not(:disabled) {
-  background: #e9eef7;
-  box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.5), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
 }
 
 /* Danger — merah lembut untuk destruktif */
@@ -518,10 +491,6 @@ body {
   outline-offset: 2px;
 }
 
-.neu-logo {
-  box-shadow: 5px 5px 10px rgba(140, 158, 192, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.95);
-}
-
 /* ===================================== */
 /* UI REFRESH: NEW TOKENS & UTILITIES    */
 /* ===================================== */
@@ -639,12 +608,6 @@ body {
 
 .neu-input-icon:focus {
   box-shadow: inset 4px 4px 9px rgba(163, 177, 198, 0.5), inset -4px -4px 9px rgba(255, 255, 255, 0.9), 0 0 0 2px rgba(37, 99, 235, 0.55);
-}
-
-/* Glass divider line */
-.glass-divider {
-  width: 1px;
-  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.4) 30%, rgba(255, 255, 255, 0.4) 70%, transparent 100%);
 }
 
 /* Table zebra */

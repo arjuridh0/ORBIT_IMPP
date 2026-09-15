@@ -1,7 +1,7 @@
 'use client'
 
 import type { Event } from '@/lib/supabase/types'
-import { DIVISI_COLORS, DIVISI_LABELS, DEFAULT_COLOR, type Divisi } from '@/lib/constants'
+import { DEFAULT_COLOR } from '@/lib/divisi'
 import { useDivisi } from '@/hooks/useDivisi'
 import { Icon } from '@/components/icons'
 import { dayNum, formatTime, inDivisiFilter, monthShort, openEventDetail } from '@/lib/divisi'
@@ -17,14 +17,11 @@ interface UpcomingListProps {
 
 export default function UpcomingList({ stats, divisiFilter }: UpcomingListProps) {
   const { divisi } = useDivisi()
-  const items = divisi.length > 0
-    ? divisi
-    : (Object.keys(DIVISI_COLORS) as Divisi[]).map((k) => ({ key: k, label: DIVISI_LABELS[k], color: DIVISI_COLORS[k] }))
 
   const tomorrowStart = new Date()
   tomorrowStart.setHours(24, 0, 0, 0)
   const mendatang = stats.upcoming.filter(
-    (e) => new Date(e.start_date) >= tomorrowStart && inDivisiFilter(items, e.color, divisiFilter)
+    (e) => new Date(e.start_date) >= tomorrowStart && inDivisiFilter(divisi, e.color, divisiFilter)
   )
 
   return (

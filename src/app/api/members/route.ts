@@ -12,11 +12,10 @@ function getServiceClient() {
 }
 
 export async function GET() {
-  const admin = getServiceClient()
-  if (!admin) return NextResponse.json({ error: 'Service key not set' }, { status: 500 })
-  const { data, error } = await admin
+  const supabase = await getSupabaseServerClient()
+  const { data, error } = await supabase
     .from('members')
-    .select('id, full_name, divisi, koor_id, created_by, created_at')
+    .select('id, full_name, divisi, koor_id')
     .order('full_name')
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ members: data || [] })

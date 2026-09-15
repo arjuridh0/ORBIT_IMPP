@@ -3,7 +3,8 @@
 import { useRef, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import type { Event } from '@/lib/supabase/types'
-import { DEFAULT_COLOR, REMINDER_OPTIONS } from '@/lib/constants'
+import { DEFAULT_COLOR, findDivisiByColor } from '@/lib/divisi'
+import { REMINDER_OPTIONS } from '@/lib/constants'
 import { useDivisi } from '@/hooks/useDivisi'
 import { iconString } from '@/components/icons'
 import { useAuth } from '@/components/AuthProvider'
@@ -14,7 +15,6 @@ import {
   generateWhatsAppBroadcast,
   copyToClipboard,
 } from '@/lib/calendar-export'
-import { findDivisiByColor } from '@/lib/divisi'
 
 function icon(name: string, cls = 'w-4 h-4') {
   return `<span style="display:inline-flex;vertical-align:-3px">${iconString(name, cls)}</span>`
@@ -382,7 +382,7 @@ export default function Calendar({ useEventsHook, divisiFilter }: CalendarProps)
 
         function updateRecPreview() {
           const sDate = (document.getElementById('add-date') as HTMLInputElement).value
-          const pat = (document.getElementById('add-pattern') as HTMLSelectElement).value as any
+          const pat = (document.getElementById('add-pattern') as HTMLSelectElement).value as 'daily' | 'weekly' | 'biweekly' | 'monthly'
           const isCount = radCount.checked
           const count = parseInt((document.getElementById('add-count') as HTMLInputElement).value, 10) || 4
           const untilDate = (document.getElementById('add-until-date') as HTMLInputElement).value
@@ -471,7 +471,7 @@ export default function Calendar({ useEventsHook, divisiFilter }: CalendarProps)
         const recurring = (document.getElementById('add-recurring') as HTMLInputElement).checked
         let recurrenceDates: Date[] | null = null
         if (recurring && !isMultiDay) {
-          const pattern = (document.getElementById('add-pattern') as HTMLSelectElement).value as any
+          const pattern = (document.getElementById('add-pattern') as HTMLSelectElement).value as 'daily' | 'weekly' | 'biweekly' | 'monthly'
           const isCount = (document.getElementById('add-rec-mode-count') as HTMLInputElement).checked
           const count = parseInt((document.getElementById('add-count') as HTMLInputElement).value, 10) || 4
           const untilDate = (document.getElementById('add-until-date') as HTMLInputElement).value
