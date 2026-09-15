@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import { AuthProvider } from '@/components/AuthProvider'
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] })
@@ -31,9 +32,15 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/logo-orbit-impp.png',
-    apple: '/logo-orbit-impp.png',
+    icon: '/favicon.svg',
+    apple: '/icon-192.png',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ORBIT',
+  },
+  formatDetection: { telephone: false },
   openGraph: {
     title: 'ORBIT IMPP - Kalender Kegiatan Organisasi',
     description: 'Satu papan agenda resmi untuk seluruh divisi Ikatan Mahasiswa Pelajar Pemalang (IMPP). Pantau jadwal rabul & kegiatan tahunan real-time.',
@@ -68,6 +75,7 @@ export default function RootLayout({
         <Script src="/vendor/fullcalendar-locale-id.min.js" strategy="beforeInteractive" />
         <AuthProvider>
           {children}
+          <ServiceWorkerRegister />
           <footer className="footer-polish py-8">
             <div className="max-w-[1400px] mx-auto px-4 text-center">
               {/* Dual logo: ORBIT + IMPP */}
