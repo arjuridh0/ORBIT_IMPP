@@ -17,7 +17,7 @@ async function canManageDivisi(key: string) {
     .single()
 
   if (!profile) return { status: 403, error: 'Profil tidak ditemukan' }
-  if (profile.role === 'admin' || profile.divisi === key) return { ok: true }
+  if (['admin', 'ketua', 'superadmin'].includes(profile.role) || profile.divisi === key) return { ok: true }
   return { status: 403, error: 'Kamu tidak memiliki akses untuk mengubah divisi ini' }
 }
 

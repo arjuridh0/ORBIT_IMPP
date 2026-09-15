@@ -10,7 +10,7 @@ create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null,
   role text not null default 'editor'
-    check (role in ('admin', 'editor')),
+    check (role in ('admin', 'editor', 'ketua', 'superadmin')),
   jabatan text,
   divisi text not null
     check (divisi in ('bph','kaderisasi','sosma','bakmi','dpw','inforsi','deplu')),
@@ -19,16 +19,17 @@ create table public.profiles (
 
 alter table public.profiles enable row level security;
 
--- 2. Helper: cek admin (SECURITY DEFINER menghindari recursion RLS)
+-- 2. Helper: cek admin/elevasi (SECURITY DEFINER menghindari recursion RLS)
+-- admin, ketua, dan superadmin diperlakukan selevel penuh
 create or replace function public.is_admin()
 returns boolean language sql security definer set search_path = public as $$
   select exists (
     select 1 from public.profiles
-    where id = auth.uid() and role = 'admin'
+    where id = auth.uid() and role in ('admin', 'ketua', 'superadmin')
   );
 $$;
 
--- 3. Helper: boleh edit event? (admin = semua, editor = miliknya)
+-- 3. Helper: boleh edit event? (admin/ketua/superadmin = semua, editor = miliknya)
 create or replace function public.can_edit_event(event_created_by uuid)
 returns boolean language sql security definer set search_path = public as $$
   select public.is_admin() or event_created_by = auth.uid();
@@ -42,11 +43,11 @@ create policy "profiles self update" on public.profiles
   for update using (auth.uid() = id)
   with check (auth.uid() = id);
 
--- PENTING (perbaikan keamanan): user hanya boleh mengubah nama/jabatan
+-- PENTING (perbaikan keamanan): user hanya boleh mengubah nama/jabatan/avatar
 -- sendiri, TIDAK role atau divisi (tanpa ini, editor bisa menaikkan
--- dirinya jadi admin).
+-- dirinya jadi admin). avatar_url ditambahkan di phase3.sql.
 revoke update on public.profiles from authenticated;
-grant update (full_name, jabatan) on public.profiles to authenticated;
+grant update (full_name, jabatan, avatar_url) on public.profiles to authenticated;
 
 -- 5. Perketat RLS events (ganti policy allow-all)
 drop policy if exists "Allow all" on public.events;

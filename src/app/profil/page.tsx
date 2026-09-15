@@ -48,7 +48,9 @@ export default function ProfilPage() {
 
   useEffect(() => {
     if (divisi.length === 0) return
-    const initial = profile?.role === 'admin' ? divisi[0].key : (profile?.divisi as string) || divisi[0].key
+    const initial = profile?.role && ['admin', 'ketua', 'superadmin'].includes(profile.role)
+      ? divisi[0].key
+      : (profile?.divisi as string) || divisi[0].key
     setEditKey(initial)
     const row = divisi.find((d) => d.key === initial)
     if (row) setColor(row.color)
@@ -79,7 +81,8 @@ export default function ProfilPage() {
     )
   }
 
-  const allowedKeys = profile.role === 'admin'
+  const isElevated = ['admin', 'ketua', 'superadmin'].includes(profile.role)
+  const allowedKeys = isElevated
     ? divisi
     : divisi.filter((d) => d.key === profile.divisi)
 
@@ -138,40 +141,39 @@ export default function ProfilPage() {
   }
 
   async function handleAvatar(file: File | null) {
-    if (!file || !supabase || !profile) return
-    if (file.size > 1024 * 1024) {
-      Swal.fire('File Terlalu Besar', 'Maksimal 1MB. Pilih foto yang lebih kecil.', 'warning')
+    if (!file || !profile) return
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire('File Terlalu Besar', 'Maksimal 5MB. Pilih foto yang lebih kecil.', 'warning')
       return
     }
     if (!file.type.startsWith('image/')) {
-      Swal.fire('Format Tidak Didukung', 'Pilih file gambar (jpg/png/webp).', 'warning')
+      Swal.fire('Format Tidak Didukung', 'Pilih file gambar (jpg/png/webp/heic).', 'warning')
       return
     }
     setUploading(true)
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
-    const path = `${profile.id}/${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, cacheControl: '3600' })
-    if (error) {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch(`/api/admin/users/${profile.id}/avatar`, {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menyimpan foto')
+      await refreshProfile()
+      Swal.fire({
+        icon: 'success',
+        title: 'Foto Diperbarui',
+        text: 'Foto profil sudah diganti.',
+        confirmButtonColor: '#2563eb',
+        timer: 1800,
+        showConfirmButton: false,
+      })
+    } catch (err) {
+      Swal.fire('Gagal Upload', err instanceof Error ? err.message : 'Terjadi kesalahan', 'error')
+    } finally {
       setUploading(false)
-      Swal.fire('Gagal Upload', error.message, 'error')
-      return
     }
-    const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-    const { error: updErr } = await supabase.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', profile.id)
-    setUploading(false)
-    if (updErr) {
-      Swal.fire('Gagal', updErr.message, 'error')
-      return
-    }
-    await refreshProfile()
-    Swal.fire({
-      icon: 'success',
-      title: 'Foto Diperbarui',
-      text: 'Foto profil sudah diganti.',
-      confirmButtonColor: '#2563eb',
-      timer: 1800,
-      showConfirmButton: false,
-    })
   }
 
   async function handlePasswordSubmit(e: React.FormEvent) {
@@ -254,7 +256,7 @@ export default function ProfilPage() {
               <button type="button" className="btn btn-primary btn-sm min-h-[38px]" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
                 {uploading ? 'Mengunggah...' : 'Ganti Foto'}
               </button>
-              <p className="text-xs text-gray-400">JPG/PNG/WebP, maksimal 1MB.</p>
+              <p className="text-xs text-gray-400">JPG/PNG/WebP/HEIC, maksimal 5MB.</p>
             </div>
           </div>
         </div>
@@ -275,7 +277,7 @@ export default function ProfilPage() {
         {allowedKeys.length > 0 && (
           <form onSubmit={handleColorSubmit} className="card-soft bg-white rounded-2xl p-5 sm:p-7 space-y-5">
             <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Warna Divisi</h2>
-            {profile.role === 'admin' && (
+            {isElevated && (
               <div>
                 <label htmlFor="editKey" className="block text-sm font-medium text-gray-700 mb-1.5">Pilih Divisi</label>
                 <select
@@ -294,7 +296,7 @@ export default function ProfilPage() {
                 </select>
               </div>
             )}
-            {profile.role !== 'admin' && (
+            {!isElevated && (
               <p className="text-sm text-gray-600">
                 Warna divisi <span className="font-semibold">{divisi.find((d) => d.key === profile.divisi)?.label ?? profile.divisi}</span> milikmu.
               </p>

@@ -84,6 +84,15 @@ export default function VisiMisiPage() {
 
       <section className="hero-banner pb-12 pt-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center relative z-10">
+          {/* Logo Organisasi: IMPP UIN Walisongo Semarang */}
+          <div className="inline-flex items-center justify-center bg-white/95 backdrop-blur-md px-6 py-2.5 sm:px-7 sm:py-3 rounded-2xl shadow-sm border border-white/80 mb-4 transition-transform hover:scale-105 duration-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo impp.png"
+              alt="Logo IMPP UIN Walisongo"
+              className="h-12 sm:h-14 w-auto object-contain"
+            />
+          </div>
           <p className="text-xs font-bold uppercase tracking-widest text-blue-200">Tentang IMPP</p>
           <h1 className="text-3xl sm:text-4xl font-black mt-2 tracking-tight">Visi &amp; Misi</h1>
           <p className="text-blue-100 mt-3 max-w-xl mx-auto">Landasan gerak dan arah organisasi.</p>
@@ -116,7 +125,7 @@ export default function VisiMisiPage() {
           </section>
 
           {/* Edit button desktop */}
-          {!loading && profile?.role === 'admin' && (
+          {!loading && profile && ['admin', 'ketua', 'superadmin'].includes(profile.role) && (
             <div className="hidden sm:flex justify-end">
               <button type="button" onClick={openEdit} className="btn btn-primary flex items-center gap-2">
                 <Icon name="pencil" cls="w-4 h-4" />
@@ -128,7 +137,7 @@ export default function VisiMisiPage() {
       </main>
 
       {/* FAB admin — mobile only */}
-      {!loading && profile?.role === 'admin' && (
+      {!loading && profile && ['admin', 'ketua', 'superadmin'].includes(profile.role) && (
         <button
           type="button"
           onClick={openEdit}

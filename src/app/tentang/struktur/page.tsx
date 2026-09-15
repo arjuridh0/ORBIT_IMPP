@@ -282,8 +282,8 @@ export default function StrukturPage() {
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 2 * 1024 * 1024) { Swal.fire('File Terlalu Besar', 'Maksimal 2MB.', 'warning'); return }
-    if (!file.type.startsWith('image/')) { Swal.fire('Format Tidak Didukung', 'Pilih JPG/PNG/WEBP.', 'warning'); return }
+    if (file.size > 5 * 1024 * 1024) { Swal.fire('File Terlalu Besar', 'Maksimal 5MB.', 'warning'); return }
+    if (!file.type.startsWith('image/')) { Swal.fire('Format Tidak Didukung', 'Pilih JPG/PNG/WEBP/HEIC.', 'warning'); return }
     setSelectedFile(file); setPreviewUrl(URL.createObjectURL(file))
   }
 
@@ -349,8 +349,17 @@ export default function StrukturPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
 
-      <section className="bg-gradient-to-b from-blue-700 to-blue-600 text-white shadow-sm">
-        <div className="max-w-[1000px] mx-auto px-4 sm:px-6 py-10 text-center">
+      <section className="hero-banner pb-10 pt-8">
+        <div className="max-w-[1000px] mx-auto px-4 sm:px-6 text-center relative z-10">
+          {/* Logo Organisasi: IMPP UIN Walisongo Semarang */}
+          <div className="inline-flex items-center justify-center bg-white/95 backdrop-blur-md px-6 py-2.5 sm:px-7 sm:py-3 rounded-2xl shadow-sm border border-white/80 mb-4 transition-transform hover:scale-105 duration-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo impp.png"
+              alt="Logo IMPP UIN Walisongo"
+              className="h-12 sm:h-14 w-auto object-contain"
+            />
+          </div>
           <p className="text-xs font-bold uppercase tracking-widest text-blue-200">Tentang IMPP</p>
           <h1 className="text-3xl sm:text-4xl font-black mt-1 tracking-tight">Struktur Organisasi</h1>
           <p className="text-blue-100 mt-2 max-w-xl mx-auto text-sm">Bagan kepengurusan ORBIT IMPP periode berjalan.</p>
@@ -808,7 +817,7 @@ export default function StrukturPage() {
                 </div>
               </div>
             </div>
-            <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/jpeg,image/png,image/webp" className="hidden" />
+            <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" className="hidden" />
             <div className="space-y-2">
               <button type="button" onClick={() => fileInputRef.current?.click()} disabled={savingPhoto}
                 className="w-full btn btn-outline btn-sm py-2 flex items-center justify-center gap-1.5">

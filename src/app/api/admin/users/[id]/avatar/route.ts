@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { processAvatar } from '@/lib/avatar'
 
 async function requireAdminOrSelf(targetId: string) {
   const supabase = await getSupabaseServerClient()
@@ -13,7 +14,7 @@ async function requireAdminOrSelf(targetId: string) {
     .eq('id', user.id)
     .single()
 
-  const isAdmin = profile?.role === 'admin'
+  const isAdmin = !!profile && ['admin', 'ketua', 'superadmin'].includes(profile.role)
   const isSelf = user.id === targetId
 
   if (!isAdmin && !isSelf) {
@@ -53,20 +54,19 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'File gambar wajib diunggah' }, { status: 400 })
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      return NextResponse.json({ error: 'Ukuran file maksimal 2MB' }, { status: 400 })
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Ukuran file maksimal 5MB' }, { status: 400 })
     }
 
     if (!file.type.startsWith('image/')) {
       return NextResponse.json({ error: 'Format file tidak didukung (harus gambar)' }, { status: 400 })
     }
 
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
     const buffer = Buffer.from(await file.arrayBuffer())
-    const path = `${id}/${Date.now()}.${ext}`
+    const path = `${id}/${Date.now()}.webp`
 
-    const { error: uploadErr } = await admin.storage.from('avatars').upload(path, buffer, {
-      contentType: file.type || 'image/jpeg',
+    const { error: uploadErr } = await admin.storage.from('avatars').upload(path, await processAvatar(buffer), {
+      contentType: 'image/webp',
       upsert: true,
       cacheControl: '3600',
     })

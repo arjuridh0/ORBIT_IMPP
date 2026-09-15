@@ -25,7 +25,7 @@ export async function PATCH(request: NextRequest) {
     .select('role')
     .eq('id', user.id)
     .single()
-  if (profile?.role !== 'admin') {
+  if (!profile || !['admin', 'ketua', 'superadmin'].includes(profile.role)) {
     return NextResponse.json({ error: 'Hanya admin' }, { status: 403 })
   }
 

@@ -19,15 +19,30 @@ Kalender kegiatan organisasi IMPP. Satu papan agenda untuk semua divisi: jadwal 
 - Profil mandiri (foto, nama, jabatan, warna divisi) dan ganti password dengan show/hide toggle.
 - Halaman Tentang IMPP: visi-misi dan struktur organisasi interaktif (Ketua & Wakil sejajar, Sekre 1&2, Bendahara 1&2, Koor, Sekjen, dan Anggota dari tabel `members` tanpa akun).
 - Header navbar tengah + hamburger + avatar dropdown.
+- **Kegiatan Rentang Multi-Hari (Multi-Day Events)**:
+  - Bar kegiatan horizontal membentang utuh melintasi hari (misal Makrab 3 hari, ETP, Baksos).
+  - Form input dengan toggle `Rentang multi-hari` & kalkulator durasi interaktif real-time.
+  - Pindah jadwal (Drag & Drop) dan Resize durasi tetap menjaga rentang durasi asli tanpa ciut.
+  - Tetap mematuhi aturan visual `dayMaxEvents: 2` dengan popover `+N more` yang rapi.
+- **Kegiatan Berulang (Rutinan) dengan Live Preview**:
+  - Pilihan batas pengulangan berdasarkan **Jumlah Sesi** atau **Sampai Tanggal**.
+  - Kotak Live Preview yang menampilkan chip tanggal-tanggal kegiatan yang akan otomatis dibuat sebelum disimpan.
+- **Form Lokasi Dinamis & Tampilan Lokasi**:
+  - Pilihan jenis lokasi `Online` atau `Offline` (dengan input nama gedung/tempat dinamis).
+  - Ditampilkan dengan ikon pin 📍 di modal detail kegiatan dan kartu sidebar mendatang.
 - **Integrasi Kalender & Ekspor**:
-  - Simpan langsung ke **Google Calendar** via tautan interaktif.
+  - Simpan langsung ke **Google Calendar** via tautan interaktif dengan tanggal & lokasi akurat.
   - Unduh file **iCalendar (.ics)** standar RFC 5545 untuk Apple Calendar (iPhone/iPad/Mac), Android, dan Outlook.
 - **WhatsApp Broadcast Generator**:
-  - Salin format broadcast WhatsApp per-kegiatan lengkap dengan emoji, detail waktu, divisi, dan tautan langsung.
+  - Salin format broadcast WhatsApp per-kegiatan lengkap dengan emoji, detail rentang waktu, lokasi, divisi, dan tautan langsung.
   - Tombol 1-klik **"Salin Jadwal Pekan Ini"** di sidebar untuk rekap agenda sepekan pengurus.
 - **Optimasi SEO & Social Sharing (Open Graph)**:
   - Dynamic Open Graph image 1200x630 (`/opengraph-image`) untuk preview kartu media sosial (WhatsApp, Telegram, Twitter/X).
   - Generator otomatis `sitemap.xml` dan `robots.txt` berbasis Next.js 15 App Router.
+- **Pengoptimalan Mobile & Sentuhan (Touch Screen)**:
+  - Tata letak card "Mendatang" diposisikan di atas Filter Divisi untuk alur informasi yang alami di mobile maupun desktop.
+  - Resolusi Chromium scroll intervention pada FullCalendar untuk scrolling layar sentuh yang mulus tanpa error console.
+
 
 ## Teknologi
 
@@ -67,6 +82,7 @@ supabase/              # SQL fase (schema, USER_ACCOUNTS.md)
 3. Jalankan SQL di Supabase Dashboard > SQL Editor, urut:
    - `supabase/phase2.sql` (tabel profiles, helper, RLS events)
    - `supabase/phase3.sql` (tabel divisi/konten, avatar_url, bucket avatars)
+   - `supabase/phase4.sql` (kolom location pada events, tabel members organisasi)
 4. Jalankan dev server: `npm run dev`, buka `http://localhost:3000`
 
 > Catatan: jangan commit `.env.local`. File itu tercakup `.gitignore`.

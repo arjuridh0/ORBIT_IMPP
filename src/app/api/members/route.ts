@@ -68,9 +68,9 @@ export async function DELETE(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Belum login' }, { status: 401 })
 
-  const { data: caller } = await supabase
+const { data: caller } = await supabase
     .from('profiles')
-    .select('role, id')
+    .select('role, divisi, id')
     .eq('id', user.id)
     .single()
 
@@ -81,11 +81,16 @@ export async function DELETE(request: NextRequest) {
   const admin = getServiceClient()
   if (!admin) return NextResponse.json({ error: 'Service key not set' }, { status: 500 })
 
-  const { data: target } = await admin.from('members').select('created_by').eq('id', id).single()
+  const { data: target } = await admin.from('members').select('created_by, divisi').eq('id', id).single()
   if (!target) return NextResponse.json({ error: 'Anggota tidak ditemukan' }, { status: 404 })
 
   const elevated = ['admin', 'ketua', 'superadmin']
-  if (!elevated.includes(caller?.role || '') && target.created_by !== user.id) {
+  const canDelete =
+    elevated.includes(caller?.role || '') ||
+    caller?.divisi === target.divisi ||
+    target.created_by === user.id
+
+  if (!canDelete) {
     return NextResponse.json({ error: 'Tidak punya izin menghapus anggota ini' }, { status: 403 })
   }
 

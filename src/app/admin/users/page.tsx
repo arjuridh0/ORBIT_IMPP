@@ -49,12 +49,12 @@ export default function AdminUsersPage() {
   function handleAvatarFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 2 * 1024 * 1024) {
-      Swal.fire('File Terlalu Besar', 'Maksimal ukuran foto adalah 2MB.', 'warning')
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire('File Terlalu Besar', 'Maksimal ukuran foto adalah 5MB.', 'warning')
       return
     }
     if (!file.type.startsWith('image/')) {
-      Swal.fire('Format Tidak Didukung', 'Harap pilih file gambar (JPG, PNG, atau WEBP).', 'warning')
+      Swal.fire('Format Tidak Didukung', 'Harap pilih file gambar (JPG, PNG, WEBP, atau HEIC).', 'warning')
       return
     }
     setAvatarFile(file)
@@ -362,12 +362,12 @@ export default function AdminUsersPage() {
     )
   }
 
-  if (profile.role !== 'admin') {
+  if (!['admin', 'ketua', 'superadmin'].includes(profile.role)) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
-          <p className="text-sm text-gray-700">Akses ditolak. Halaman ini hanya untuk admin.</p>
+          <p className="text-sm text-gray-700">Akses ditolak. Halaman ini hanya untuk pengurus inti.</p>
           <Link href="/" className="text-sm font-semibold text-blue-600 hover:underline">Kembali ke kalender</Link>
         </div>
       </div>
@@ -557,7 +557,7 @@ export default function AdminUsersPage() {
               type="file"
               ref={avatarInputRef}
               onChange={handleAvatarFileSelect}
-              accept="image/jpeg,image/png,image/webp"
+              accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
               className="hidden"
             />
 

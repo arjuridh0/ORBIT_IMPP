@@ -13,7 +13,7 @@ async function requireAdmin() {
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'admin') return { status: 403, error: 'Hanya admin yang boleh mengakses' }
+  if (!profile || !['admin', 'ketua', 'superadmin'].includes(profile.role)) return { status: 403, error: 'Hanya admin yang boleh mengakses' }
   return null
 }
 

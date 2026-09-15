@@ -13,6 +13,7 @@
     "next": "15.5.25",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "sharp": "^0.35.4",
     "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
@@ -22,5 +23,10 @@
     "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.8"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.23"
+    }
   }
 }
