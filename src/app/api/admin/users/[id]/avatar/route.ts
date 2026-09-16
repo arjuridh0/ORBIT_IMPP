@@ -107,6 +107,15 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
     )
   }
 
+  try {
+    const { data: files } = await admin.storage.from('avatars').list(id)
+    if (files && files.length > 0) {
+      await admin.storage.from('avatars').remove(files.map((f) => `${id}/${f.name}`))
+    }
+  } catch (storageErr) {
+    console.warn('Storage cleanup warning:', storageErr)
+  }
+
   const { error: profileErr } = await admin
     .from('profiles')
     .update({ avatar_url: null })

@@ -9,6 +9,8 @@ import { Icon } from '@/components/icons'
 import { escapeHtml } from '@/lib/konten'
 import PushNotificationButton from '@/components/PushNotificationButton'
 import type { DivisiInfo } from '@/hooks/useDivisi'
+import { AdminImppSkeleton } from '@/components/Skeleton'
+import MatrixLoader from '@/components/MatrixLoader'
 
 const ALLOWED_ROLES = ['admin', 'ketua', 'superadmin']
 
@@ -236,14 +238,7 @@ export default function KelolaImppPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-gray-500">Memuat...</p>
-        </div>
-      </div>
-    )
+    return <AdminImppSkeleton />
   }
 
   if (!profile || !ALLOWED_ROLES.includes(profile.role)) {
@@ -272,7 +267,18 @@ export default function KelolaImppPage() {
 
       <main className="max-w-[900px] mx-auto px-4 sm:px-6 py-6 pb-16 space-y-6">
         {loadingData ? (
-          <p className="text-sm text-gray-400 text-center py-8">Memuat data...</p>
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl card-soft p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="h-5 w-40 bg-gray-200/80 rounded animate-pulse" />
+                  <div className="h-8 w-16 bg-gray-200/80 rounded-lg animate-pulse" />
+                </div>
+                <div className="h-4 w-full max-w-md bg-gray-200/80 rounded animate-pulse" />
+                <div className="h-16 w-full bg-gray-200/80 rounded-xl animate-pulse" />
+              </div>
+            ))}
+          </div>
         ) : (
           <>
             {/* Seksi 1: Info Kabinet */}
@@ -284,7 +290,8 @@ export default function KelolaImppPage() {
                 </h2>
                 <button type="button" onClick={openEditKabinet} disabled={saving}
                   className="btn btn-outline btn-sm flex items-center gap-1.5">
-                  <Icon name="pencil" cls="w-3.5 h-3.5" /> Edit
+                  {saving ? <MatrixLoader size="sm" /> : <Icon name="pencil" cls="w-3.5 h-3.5" />}
+                  <span>Edit</span>
                 </button>
               </div>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -312,7 +319,8 @@ export default function KelolaImppPage() {
                 </h2>
                 <button type="button" onClick={openEditVisiMisi} disabled={saving}
                   className="btn btn-outline btn-sm flex items-center gap-1.5">
-                  <Icon name="pencil" cls="w-3.5 h-3.5" /> Edit
+                  {saving ? <MatrixLoader size="sm" /> : <Icon name="pencil" cls="w-3.5 h-3.5" />}
+                  <span>Edit</span>
                 </button>
               </div>
               <div className="space-y-3 text-sm">

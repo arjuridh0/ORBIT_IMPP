@@ -9,6 +9,8 @@ import { useDivisi } from '@/hooks/useDivisi'
 import { Icon } from '@/components/icons'
 import { DEFAULT_COLOR } from '@/lib/divisi'
 import { supabase } from '@/lib/supabase/client'
+import MatrixLoader from '@/components/MatrixLoader'
+import { ProfilSkeleton } from '@/components/Skeleton'
 
 export default function ProfilPage() {
   const { profile, user, loading, refreshProfile, logout } = useAuth()
@@ -58,14 +60,7 @@ export default function ProfilPage() {
   }, [divisi, profile])
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
-          Memuat...
-        </div>
-      </div>
-    )
+    return <ProfilSkeleton />
   }
 
   if (!profile) {
@@ -177,6 +172,42 @@ export default function ProfilPage() {
     }
   }
 
+  async function handleDeleteAvatar() {
+    if (!profile?.avatar_url) return
+    const result = await Swal.fire({
+      title: 'Hapus foto profil?',
+      text: 'Foto profil akan dihapus dan kembali menggunakan inisial.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#e11d48',
+    })
+    if (!result.isConfirmed) return
+
+    setUploading(true)
+    try {
+      const res = await fetch(`/api/admin/users/${profile.id}/avatar`, {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menghapus foto')
+      await refreshProfile()
+      Swal.fire({
+        icon: 'success',
+        title: 'Foto Dihapus',
+        text: 'Foto profil berhasil dihapus.',
+        confirmButtonColor: '#2563eb',
+        timer: 1600,
+        showConfirmButton: false,
+      })
+    } catch (err) {
+      Swal.fire('Gagal', err instanceof Error ? err.message : 'Terjadi kesalahan', 'error')
+    } finally {
+      setUploading(false)
+    }
+  }
+
   async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (newPw !== confirmPw) {
@@ -254,9 +285,27 @@ export default function ProfilPage() {
                   e.target.value = ''
                 }}
               />
-              <button type="button" className="btn btn-primary btn-sm min-h-[38px]" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
-                {uploading ? 'Mengunggah...' : 'Ganti Foto'}
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm min-h-[38px] flex items-center gap-2"
+                  disabled={uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {uploading && <MatrixLoader size="sm" />}
+                  <span>{uploading ? 'Memproses...' : (profile.avatar_url ? 'Ganti Foto' : 'Unggah Foto')}</span>
+                </button>
+                {profile.avatar_url && (
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm min-h-[38px] flex items-center gap-2"
+                    disabled={uploading}
+                    onClick={handleDeleteAvatar}
+                  >
+                    Hapus Foto
+                  </button>
+                )}
+              </div>
               <p className="text-xs text-gray-400">JPG/PNG/WebP/HEIC, maksimal 5MB.</p>
             </div>
           </div>
@@ -272,7 +321,10 @@ export default function ProfilPage() {
             <label htmlFor="jabatan" className="block text-sm font-medium text-gray-700 mb-1.5">Jabatan</label>
             <input id="jabatan" type="text" value={jabatan} onChange={(e) => setJabatan(e.target.value)} className="ds-input" placeholder="cth: Ketua Umum / Koordinator Sosma" />
           </div>
-          <button type="submit" className="btn btn-primary" disabled={savingProfile}>{savingProfile ? 'Menyimpan...' : 'Simpan Data'}</button>
+          <button type="submit" className="btn btn-primary flex items-center gap-2" disabled={savingProfile}>
+            {savingProfile && <MatrixLoader size="sm" />}
+            <span>{savingProfile ? 'Menyimpan...' : 'Simpan Data'}</span>
+          </button>
         </form>
 
         {allowedKeys.length > 0 && (
@@ -324,7 +376,10 @@ export default function ProfilPage() {
                 Warna lama dipakai event divisi ini akan ikut diperbarui.
               </p>
             </div>
-            <button type="submit" className="btn btn-primary" disabled={savingColor}>{savingColor ? 'Menyimpan...' : 'Simpan Warna'}</button>
+            <button type="submit" className="btn btn-primary flex items-center gap-2" disabled={savingColor}>
+              {savingColor && <MatrixLoader size="sm" />}
+              <span>{savingColor ? 'Menyimpan...' : 'Simpan Warna'}</span>
+            </button>
           </form>
         )}
 
@@ -357,7 +412,10 @@ export default function ProfilPage() {
               </button>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary" disabled={savingPw}>{savingPw ? 'Menyimpan...' : 'Ganti Password'}</button>
+          <button type="submit" className="btn btn-primary flex items-center gap-2" disabled={savingPw}>
+            {savingPw && <MatrixLoader size="sm" />}
+            <span>{savingPw ? 'Menyimpan...' : 'Ganti Password'}</span>
+          </button>
         </form>
 
         <div className="text-center">

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
@@ -7,6 +7,8 @@ import Header from '@/components/Header'
 import { useAuth } from '@/components/AuthProvider'
 import { Icon } from '@/components/icons'
 import { useDivisi } from '@/hooks/useDivisi'
+import { AdminUsersSkeleton } from '@/components/Skeleton'
+import MatrixLoader from '@/components/MatrixLoader'
 
 interface AdminUser {
   id: string
@@ -337,14 +339,7 @@ export default function AdminUsersPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
-        <div className="flex-1 flex divisi-center justify-center">
-          <p className="text-sm text-gray-500">Memuat...</p>
-        </div>
-      </div>
-    )
+    return <AdminUsersSkeleton />
   }
 
   if (!profile) {
@@ -574,9 +569,10 @@ export default function AdminUsersPage() {
                   type="button"
                   onClick={handleSaveAvatar}
                   disabled={savingAvatar}
-                  className="w-full btn btn-primary btn-sm py-2"
+                  className="w-full btn btn-primary btn-sm py-2 flex items-center justify-center gap-2"
                 >
-                  {savingAvatar ? 'Menyimpan...' : 'Simpan Foto Baru'}
+                  {savingAvatar && <MatrixLoader size="sm" />}
+                  <span>{savingAvatar ? 'Menyimpan...' : 'Simpan Foto Baru'}</span>
                 </button>
               )}
 
@@ -585,9 +581,10 @@ export default function AdminUsersPage() {
                   type="button"
                   onClick={handleDeleteAvatar}
                   disabled={savingAvatar}
-                  className="w-full btn btn-danger btn-sm py-2"
+                  className="w-full btn btn-danger btn-sm py-2 flex items-center justify-center gap-2"
                 >
-                  Hapus Foto Profil
+                  {savingAvatar && <MatrixLoader size="sm" />}
+                  <span>{savingAvatar ? 'Menghapus...' : 'Hapus Foto Profil'}</span>
                 </button>
               )}
 
@@ -661,7 +658,10 @@ export default function AdminUsersPage() {
               </div>
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={() => { setShowAddModal(false); setForm(emptyForm) }} className="btn btn-outline flex-1">Batal</button>
-                <button type="submit" disabled={saving} className="btn btn-primary flex-1">{saving ? 'Menyimpan...' : 'Daftarkan'}</button>
+                <button type="submit" disabled={saving} className="btn btn-primary flex-1 flex items-center justify-center gap-2">
+                  {saving && <MatrixLoader size="sm" />}
+                  <span>{saving ? 'Menyimpan...' : 'Daftarkan'}</span>
+                </button>
               </div>
             </form>
           </div>

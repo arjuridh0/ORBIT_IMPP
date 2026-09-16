@@ -7,6 +7,8 @@ import { useDivisi } from '@/hooks/useDivisi'
 import { useAuth } from '@/components/AuthProvider'
 import { Icon } from '@/components/icons'
 import Swal from 'sweetalert2'
+import { StrukturSkeleton } from '@/components/Skeleton'
+import MatrixLoader from '@/components/MatrixLoader'
 
 interface Pengurus {
   id: string
@@ -391,7 +393,7 @@ export default function StrukturPage() {
         </div>
 
         {loadingData ? (
-          <div className="py-20 text-center text-gray-500 text-sm">Memuat bagan struktur...</div>
+          <StrukturSkeleton />
         ) : !ketua ? (
           <div className="py-20 text-center text-gray-400 text-sm">Data pengurus belum tersedia.</div>
         ) : (
@@ -479,7 +481,7 @@ export default function StrukturPage() {
                                     placeholder="Nama anggota" className="ds-input text-xs flex-1 py-1" />
                                   <button type="button" disabled={savingMember}
                                     onClick={() => handleAddMember(d.key, koor.id.startsWith('empty') ? null : koor.id)}
-                                    className="btn btn-primary btn-sm text-xs px-2">{savingMember ? '...' : 'OK'}</button>
+                                    className="btn btn-primary btn-sm text-xs px-2 flex items-center justify-center gap-1">{savingMember ? <MatrixLoader size="sm" /> : 'OK'}</button>
                                   <button type="button" onClick={() => setAddMemberDivisi(null)} className="btn btn-outline btn-sm text-xs px-2">✕</button>
                                 </div>
                               )}
@@ -754,9 +756,9 @@ export default function StrukturPage() {
                                     type="button"
                                     disabled={savingMember}
                                     onClick={() => handleAddMember(d.key, koor.id.startsWith('empty') ? null : koor.id)}
-                                    className="flex-1 text-[9px] bg-blue-600 text-white rounded py-0.5 font-medium hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex-1 text-[9px] bg-blue-600 text-white rounded py-0.5 font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-1"
                                   >
-                                    {savingMember ? '...' : 'Simpan'}
+                                    {savingMember ? <MatrixLoader size="sm" /> : 'Simpan'}
                                   </button>
                                   <button
                                     type="button"
@@ -833,12 +835,16 @@ export default function StrukturPage() {
                 <span>{previewUrl ? 'Pilih Foto Lain' : 'Pilih Foto (JPG/PNG)'}</span>
               </button>
               {selectedFile && (
-                <button type="button" onClick={handleSavePhoto} disabled={savingPhoto} className="w-full btn btn-primary btn-sm py-2">
-                  {savingPhoto ? 'Menyimpan...' : 'Simpan Foto Baru'}
+                <button type="button" onClick={handleSavePhoto} disabled={savingPhoto} className="w-full btn btn-primary btn-sm py-2 flex items-center justify-center gap-2">
+                  {savingPhoto && <MatrixLoader size="sm" />}
+                  <span>{savingPhoto ? 'Menyimpan...' : 'Simpan Foto Baru'}</span>
                 </button>
               )}
               {editTarget.avatar_url && !selectedFile && (
-                <button type="button" onClick={handleDeletePhoto} disabled={savingPhoto} className="w-full btn btn-danger btn-sm py-2">Hapus Foto Profil</button>
+                <button type="button" onClick={handleDeletePhoto} disabled={savingPhoto} className="w-full btn btn-danger btn-sm py-2 flex items-center justify-center gap-2">
+                  {savingPhoto && <MatrixLoader size="sm" />}
+                  <span>{savingPhoto ? 'Menghapus...' : 'Hapus Foto Profil'}</span>
+                </button>
               )}
               <button type="button" onClick={() => { setEditTarget(null); setSelectedFile(null) }} disabled={savingPhoto}
                 className="w-full text-xs text-gray-500 hover:text-gray-700 py-1 font-medium">Tutup / Batal</button>
