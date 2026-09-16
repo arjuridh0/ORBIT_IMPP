@@ -57,6 +57,13 @@ export default function Home() {
           {/* Main Calendar Area */}
           <div className="lg:col-span-9">
             <Calendar useEventsHook={eventsHook} divisiFilter={divisiFilter} />
+            <p className="text-xs text-gray-500 leading-relaxed px-1 mt-3">
+              <span className="inline-flex items-center gap-1.5 font-bold text-blue-600 mr-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" />
+                NB:
+              </span>
+              Klik tanggal untuk menambah kegiatan, klik kegiatan untuk detail, tarik kegiatan untuk pindah jadwal.
+            </p>
           </div>
         </div>
       </main>
