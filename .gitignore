@@ -27,3 +27,4 @@ supabase/akun_supabase.txt
 
 # Tooling internal
 .impeccable/
+.superpowers/
